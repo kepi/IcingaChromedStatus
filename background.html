@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="inc/jquery-1.4.2.min.js"></script>
+  <script src="icinga.js"></script>
+</head>
+<body>
+
+<script>
+var hosts = [];
+
+chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
+  if(request.reqtype == "get-data") {
+    sendResponse({hosts: hosts});
+  }
+});
+
+var username = window.localStorage.username;
+var password = window.localStorage.password;
+var url = window.localStorage.url+'?host=all';
+
+$.ajax({url: url, password: password, username: username, complete: function(res, status) {
+  console.log(status);
+  console.log(res.getAllResponseHeaders());
+  if ( status === "success" || status === "notmodified" ) {
+    selector = " .status > tbody > tr:gt(0)";
+
+    // regular pro smazani obrazku
+    var rimg = /<img(.|\s)*?\/?>/gi;
+
+    // nevim jestli by to neslo vic koser
+    obj = $("<div />");
+    // TODO: potrebujeme ziskat url obrazku, tak neco lepsiho nez je smazat
+    obj.html($("<div />").append(res.responseText.replace(rimg, "")).find(selector));
+  
+    // delete images?
+    obj.find("img").each( function() {
+      $(this).remove();
+    });
+  
+    var host = '';
+  
+    var service = '';
+    var link = '';
+  
+    // browse rows
+    obj.find("> tr").each( function(index, el) {
+          // browse cols
+      $(el).find("> td").each( function(i, e) {
+        // first col, we solve host
+        if(i == 0)  {
+              val = $(e).find("a").text();
+          if ( val != '' ) {
+            host = val;
+                var href = $(e).find("a").attr('href');
+            h = new Host(host, href);
+            hosts[host] = h;
+                //console.log("Found host: "+host+" with url "+href);
+          }
+            }
+        // second col is service
+        else if ( i == 1 ) {
+              service = $(e).find("a").text();
+              link = $(e).find("a").attr('href');
+        }
+        // service status
+        else if ( i == 2 ) {
+              var state = $(e).text();
+          s = new Service(service, link, state);
+          hosts[host].addService(s);
+              //console.log("Found service: "+service+" with url "+href+" and state "+state);
+        }
+        // other columns
+        // 3 - last check
+        // 4 - duration
+        // 5 - attempt
+        // 6 - status
+      });
+    });
+  }
+  /*
+     console.time("test2");
+     var o = '';
+     for (h in hosts) {
+       host = hosts[h];
+
+       if (host.warned > 0 )
+         o += '<li>'+host.name+'</li>';
+     }
+     $("#output").append('<ul>'+o+'</ul>');
+     console.timeEnd("test2");
+     */
+
+}});
+
+  </script>
+</body>
+</html>
+
