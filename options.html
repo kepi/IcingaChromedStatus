@@ -1,0 +1,51 @@
+<html>
+<head><title>Icinga - Options</title>
+<link type="text/css" rel="stylesheet" href="style.css" />
+
+<script type="text/javascript">
+// Saves options to localStorage.
+function save_options() {
+  if (!window.localStorage) {
+          alert("Error local storage is unavailable.");
+          window.close();
+  }
+
+  window.localStorage.username = document.getElementById("username").value;
+  if ( document.getElementById("password").value != '' )
+    window.localStorage.password = document.getElementById("password").value;
+  window.localStorage.url = document.getElementById("url").value;
+
+  // Update status to let user know options were saved.
+  var status = document.getElementById("status");
+  status.innerHTML = "Options Saved.";
+  setTimeout(function() {
+    status.innerHTML = "";
+  }, 750);
+}
+
+// Restores select box state to saved value from localStorage.
+function restore_options() {
+  document.getElementById("username").value = window.localStorage.username;
+  document.getElementById("url").value = window.localStorage.url;
+}
+
+</script>
+</head>
+
+<body onload="restore_options()" id="options">
+<h3>Icinga &ndash; Options</h3>
+<div>
+<label for="username">Username</label> <input type="test" name="username" id="username" />
+</div>
+<div>
+<label for="password">Password</label> <input type="password" name="password" id="password" />
+</div>
+<div>
+<label for="url">URL</label> <input type="test" name="url" id="url" />
+</div>
+
+<br />
+<button onclick="save_options()">Save</button>
+<span id="status"></span>
+</body>
+</html>
