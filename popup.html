@@ -1,43 +1,69 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <style>
-  body{ font-size: 12px; font-family: Arial; }
+  <style type="text/css">
+  body { font-size: 62.5%; min-width: 400px; }
   </style>
+
   <script src="inc/jquery-1.4.2.min.js"></script>
+  <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css" rel="stylesheet" type="text/css"/>
+  <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js"></script>
   <script src="icinga.js"></script>
-</head>
-<body>
 
-Icinga Status
-
-<div id="output"></div>
-  
 <script>
-
 $(document).ready(function() {
-   console.log('ready');
+
+  $("#tabs").tabs();
+
    chrome.extension.sendRequest({reqtype: "get-data"}, function(response) {
-     console.log('got data');
-     hosts = response.hosts;
-     console.log(hosts);
+     console.log('data received');
 
      // TODO: v icinga.js se musi nejak vyrobit serializovane vystupy
      // v JSON, ktere se budou z background predavat dopredu
      //
      // background by tedy mel dostavat ruzne pozadavky a vracet je, namisto
      // aby se resili primo v popupu, ten je bude pouze zobrazovat
+     o = '';
 
-     /*
-       if (host.warned > 0 )
-         o += '<li>'+host.name+'</li>';
+     for (h in response.hosts) {
+       host = response.hosts[h];
+       o += "<tr><td>"+host.name+"</td></tr>";
      }
-     $("#output").append('<ul>'+o+'</ul>');
-     */
+
+    $("#output").html('<table>'+o+'</table>');
   });
 });
 
 </script>
+</head>
+<body>
+
+Icinga Status
+
+<div id="tabs">
+  <ul>
+    <li><a href="#tab-1"><span>Overview</span></a></li>
+    <li><a href="#tab-2"><span>Hosts</span></a></li>
+    <li><a href="#tab-3"><span>Services</span></a></li>
+    <li><a href="#tab-4"><span>About</span></a></li>
+  </ul>
+
+  <div id="tab-1">
+    <div id="output"></div>
+  </div>
+  <div id="tab-2">
+    kuk kuk
+  </div>
+  <div id="tab-3">
+    kuk kuk kuk
+  </div>
+  <div id="tab-4">
+    kuk 4
+  </div>
+</div>
+
+  
+
 </body>
 </html>
 

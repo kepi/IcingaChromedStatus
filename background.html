@@ -7,11 +7,11 @@
 <body>
 
 <script>
-var hosts = [];
+var Hosts = new Hosts();
 
 chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
   if(request.reqtype == "get-data") {
-    sendResponse({hosts: hosts});
+    sendResponse(Hosts.toJSON({warned: false}));
   }
 });
 
@@ -52,9 +52,10 @@ $.ajax({url: url, password: password, username: username, complete: function(res
               val = $(e).find("a").text();
           if ( val != '' ) {
             host = val;
-                var href = $(e).find("a").attr('href');
+            var href = $(e).find("a").attr('href');
             h = new Host(host, href);
-            hosts[host] = h;
+            Hosts.addHost(h);
+            Hosts.setBadge();
                 //console.log("Found host: "+host+" with url "+href);
           }
             }
@@ -67,7 +68,7 @@ $.ajax({url: url, password: password, username: username, complete: function(res
         else if ( i == 2 ) {
               var state = $(e).text();
           s = new Service(service, link, state);
-          hosts[host].addService(s);
+          Hosts.getHost(host).addService(s);
               //console.log("Found service: "+service+" with url "+href+" and state "+state);
         }
         // other columns
@@ -77,6 +78,8 @@ $.ajax({url: url, password: password, username: username, complete: function(res
         // 6 - status
       });
     });
+
+    Hosts.setBadge();
   }
   /*
      console.time("test2");
