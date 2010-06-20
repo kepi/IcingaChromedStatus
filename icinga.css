@@ -1,0 +1,33 @@
+#totalsHosts { 
+  float: left;
+  margin-right: 10px;
+}
+
+#totalsServices { 
+  float: left 
+}
+
+#totalsHosts th, #totalsServices th {
+  background: #707677;
+  color: white;
+}
+
+#totalsHosts h3, #totalsServices h3 {
+  margin: 0px 0px 3px 0px;
+}
+
+.ok, .cri, .unr, .pend, .unkn, .warn {
+  color: white;
+  text-align: center;
+}
+
+.ok { background: #00cc33 }
+.cri { background: #ff3300 }
+.unr, .pend { 
+  background: #e9e9e9;
+  color: black;
+}
+.unkn { background: #bf44b2 }
+.warn { background: #ffa500 }
+
+br.clear { clear: both };

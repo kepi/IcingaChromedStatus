@@ -7,6 +7,7 @@
 
   <script src="inc/jquery-1.4.2.min.js"></script>
   <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css" rel="stylesheet" type="text/css"/>
+  <link href="icinga.css" rel="stylesheet" type="text/css"/>
   <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js"></script>
   <script src="icinga.js"></script>
 
@@ -23,25 +24,41 @@ $(document).ready(function() {
      //
      // background by tedy mel dostavat ruzne pozadavky a vracet je, namisto
      // aby se resili primo v popupu, ten je bude pouze zobrazovat
-     o = '';
+    var o = '';
 
-    console.log(response.hosts);
+    console.log(response.totals_services);
      for (h in response.hosts) {
        host = response.hosts[h];
-       console.log(host.states);
-       o += "<tr><td>"+host.name+"</td><td>"+host.states['WORST']+"</td></tr>";
+       o += "<tr><td>"+host.name+"</td><td>"+host.states['HOST']+"</td><td>"+host.states['WORST']+"</td></tr>";
      }
 
-    $("#output").html('<table>'+o+'</table>');
+    var t = '<div id="totalsHosts"><h3>Host Status</h3><table>'+
+       '<tr><th>Up</th><th>Down</th><th>Unr</th><th>Pend</th></tr>'+
+       '<tr>'+
+       '<td class="ok">'+response.totals_hosts[0]+'</td>'+
+       '<td class="cri">'+response.totals_hosts[8]+'</td>'+
+       '<td class="unr">'+response.totals_hosts[4]+'</td>'+
+       '<td class="pend">'+response.totals_hosts[1]+'</td>'+
+       '</tr></table></div>';
+
+    t = t + '<div id="totalsServices"><h3>Service Status</h3><table>'+
+       '<tr><th>Ok</th><th>Warn</th><th>Unkn</th><th>Crit</th><th>Pend</th></tr>'+
+       '<tr>'+
+       '<td class="ok">'+response.totals_services[0]+'</td>'+
+       '<td class="warn">'+response.totals_services[4]+'</td>'+
+       '<td class="unkn">'+response.totals_services[2]+'</td>'+
+       '<td class="cri">'+response.totals_services[8]+'</td>'+
+       '<td class="pend">'+response.totals_services[1]+'</td>'+
+       '</tr></table></div><br class="clear" />';
+
+
+    $("#output").html(t+'<table>'+o+'</table>')
   });
 });
 
 </script>
 </head>
 <body>
-
-Icinga Status
-
 <div id="tabs">
   <ul>
     <li><a href="#tab-1"><span>Overview</span></a></li>
@@ -63,9 +80,6 @@ Icinga Status
     kuk 4
   </div>
 </div>
-
-  
-
 </body>
 </html>
 

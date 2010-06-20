@@ -50,13 +50,15 @@ $.ajax({url: url, password: password, username: username, complete: function(res
       $(el).find("> td").each( function(i, e) {
         // first col, we solve host
         if(i == 0)  {
-              val = $(e).find("a").text();
+          val = $(e).find("a").text();
           if ( val != '' ) {
+            // get Host state
+            var statusclass = $(this).attr('class');
             host = val;
             var href = $(e).find("a").attr('href');
             h = new Host(host, href);
-            Hosts.addHost(h);
-            Hosts.setBadge();
+            Hosts.addHost(h, statusclass);
+            //Hosts.setBadge();
                 //console.log("Found host: "+host+" with url "+href);
           }
             }
