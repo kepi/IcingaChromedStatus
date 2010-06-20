@@ -12,27 +12,53 @@
   <script src="icinga.js"></script>
 
 <script>
+function goto(url) {
+  chrome.tabs.create({url: url});
+
+  if ( typeof arguments[1] != "undefined" && arguments[1] === true )
+    window.close();
+}
+
 $(document).ready(function() {
+
 
   $("#tabs").tabs();
 
-   chrome.extension.sendRequest({reqtype: "get-data"}, function(response) {
-     console.log('data received');
+  chrome.extension.sendRequest({reqtype: "get-data"}, function(response) {
+    //console.log('data received');
 
-     // TODO: v icinga.js se musi nejak vyrobit serializovane vystupy
-     // v JSON, ktere se budou z background predavat dopredu
-     //
-     // background by tedy mel dostavat ruzne pozadavky a vracet je, namisto
-     // aby se resili primo v popupu, ten je bude pouze zobrazovat
-    var o = '';
+    var oo = '';
+    var oh = '';
+    var os = '';
 
-    console.log(response.totals_services);
-     for (h in response.hosts) {
-       host = response.hosts[h];
-       o += "<tr><td>"+host.name+"</td><td>"+host.states['HOST']+"</td><td>"+host.states['WORST']+"</td></tr>";
-     }
+    // browse all hosts
+    for (var h in response.hosts) {
+      var host = response.hosts[h];
+      var line = '<tr class="host"><td colspan="2" class="normal"><a href="#" onclick="goto(\''+window.localStorage.url_icinga+'/'+host.link+'\')">'+host.name+'</a></td><td class="state '+stateClass(host.states['HOST'])+'">'+stateClass(host.states['HOST'], true)+'</td></tr>';
 
-    var t = '<div id="totalsHosts"><h3>Host Status</h3><table>'+
+      // add to overview only if not ok
+      if ( host.states['HOST'] > 0 || host.states['WRONG'] > 0 )
+        oo += line;
+
+      oh += line;
+      os += line;
+
+      // browse all services of host
+      for (var s in host.services ) {
+        var service = host.services[s];
+        var line = '<tr class="service"><td style="width: 30px;">&nbsp;</td><td class="normal"><a href="#" onclick="goto(\''+window.localStorage.url_icinga+'/'+service.link+'\')">'+service.name+'</td><td class="state '+stateClass(service.state)+'">'+stateClass(service.state, true)+'</td></tr>';
+
+        // add to overview only if not ok
+        if ( service.state > 0 )
+          oo += line;
+
+        os += line;
+      }
+    }
+
+    oo = '<br /><h3>Problems on hosts and services</h3><table id="tableOverview">'+oo+'</table>';
+
+    var ot = '<div id="totalsHosts"><h3>Host Status</h3><table>'+
        '<tr><th>Up</th><th>Down</th><th>Unr</th><th>Pend</th></tr>'+
        '<tr>'+
        '<td class="ok">'+response.totals_hosts[0]+'</td>'+
@@ -41,7 +67,7 @@ $(document).ready(function() {
        '<td class="pend">'+response.totals_hosts[1]+'</td>'+
        '</tr></table></div>';
 
-    t = t + '<div id="totalsServices"><h3>Service Status</h3><table>'+
+    ot = ot + '<div id="totalsServices"><h3>Service Status</h3><table>'+
        '<tr><th>Ok</th><th>Warn</th><th>Unkn</th><th>Crit</th><th>Pend</th></tr>'+
        '<tr>'+
        '<td class="ok">'+response.totals_services[0]+'</td>'+
@@ -52,8 +78,10 @@ $(document).ready(function() {
        '</tr></table></div><br class="clear" />';
 
 
-    $("#output").html(t+'<table>'+o+'</table>')
-  });
+    $("#output").html(ot+oo)
+    $("#outputHosts").html('<table id="tableHosts">'+oh+'</table>');
+    $("#outputServices").html('<table id="tableServices">'+os+'</table>');
+  })
 });
 
 </script>
@@ -71,13 +99,20 @@ $(document).ready(function() {
     <div id="output"></div>
   </div>
   <div id="tab-2">
-    kuk kuk
+    <h3>Hosts status</h3>
+    <div id="outputHosts"></div>
   </div>
   <div id="tab-3">
-    kuk kuk kuk
+    <h3>Services status</h3>
+    <div id="outputServices"></div>
   </div>
   <div id="tab-4">
-    kuk 4
+    <h3>Icinga Chromed Status</h3>
+    <p>This extension is <strong>Alpha quality</strong> and should server as technology preview only now.</p>
+
+    <p>This is extension which should help monitor status of hosts and their services while using Icinga or Nagios monitoring software.</p>
+
+    <p>This extension was written by <a href="http://kepi.cz/">Ondra 'Kepi' Kudlík</a> and kindly sponsored by <a href="http://www.igloonet.cz/">IglooNET.cz</a> company.</p>
   </div>
 </div>
 </body>

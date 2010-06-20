@@ -11,7 +11,8 @@ var Hosts = new Hosts();
 
 chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
   if(request.reqtype == "get-data") {
-    resp = Hosts.toJSON({warned: true});
+    //resp = Hosts.toJSON({warned: true});
+    resp = Hosts.toJSON();
     console.log(resp);
     sendResponse(resp);
   }
@@ -20,8 +21,7 @@ chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
 var username = window.localStorage.username;
 var password = window.localStorage.password;
 var url = window.localStorage.url+'?host=all';
-var url_base = url.split("/")[2];
-var url_base = url.replace(/^(https?:\/\/[^\/]+)\/.*$/i, '$1');
+var url_base = window.localStorage.url_base;
 
 $.ajax({url: url, password: password, username: username, complete: function(res, status) {
   console.log(status);

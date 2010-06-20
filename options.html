@@ -13,7 +13,11 @@ function save_options() {
   window.localStorage.username = document.getElementById("username").value;
   if ( document.getElementById("password").value != '' )
     window.localStorage.password = document.getElementById("password").value;
+
   window.localStorage.url = document.getElementById("url").value;
+
+  window.localStorage.url_base = window.localStorage.url.replace(/^(https?:\/\/[^\/]+)\/.*$/i, '$1');
+  window.localStorage.url_icinga = window.localStorage.url.replace(/^(.*)\/[^\/]+.cgi$/i, '$1');
 
   // Update status to let user know options were saved.
   var status = document.getElementById("status");

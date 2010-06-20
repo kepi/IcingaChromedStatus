@@ -10,6 +10,12 @@ const HSTATE_PEND = 1;
 const HSTATE_UNR  = 4;
 const HSTATE_DOWN = 8;
 
+function stateClass(state, full)
+{
+  var classes = full == undefined ? {0: 'ok', 1: 'pend', 2: 'unkn', 4: 'warn', 8: 'cri'} : {0: 'ok', 1: 'pending', 2: 'unknown', 4: 'warning', 8: 'critical'};
+  return classes[state];
+}
+
 function Hosts()
 {
   this.hosts = [];
@@ -102,7 +108,7 @@ function Hosts()
     for (var h in this.hosts) {
       pushit = true;
 
-      if ( options.warned == true )
+      if ( options != undefined && options.warned == true )
         pushit = this.hosts[h].getState() ? false : true;
 
       if ( pushit )
