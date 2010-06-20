@@ -25,9 +25,11 @@ $(document).ready(function() {
      // aby se resili primo v popupu, ten je bude pouze zobrazovat
      o = '';
 
+    console.log(response.hosts);
      for (h in response.hosts) {
        host = response.hosts[h];
-       o += "<tr><td>"+host.name+"</td></tr>";
+       console.log(host.states);
+       o += "<tr><td>"+host.name+"</td><td>"+host.states['WORST']+"</td></tr>";
      }
 
     $("#output").html('<table>'+o+'</table>');

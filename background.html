@@ -11,13 +11,17 @@ var Hosts = new Hosts();
 
 chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
   if(request.reqtype == "get-data") {
-    sendResponse(Hosts.toJSON({warned: false}));
+    resp = Hosts.toJSON({warned: true});
+    console.log(resp);
+    sendResponse(resp);
   }
 });
 
 var username = window.localStorage.username;
 var password = window.localStorage.password;
 var url = window.localStorage.url+'?host=all';
+var url_base = url.split("/")[2];
+var url_base = url.replace(/^(https?:\/\/[^\/]+)\/.*$/i, '$1');
 
 $.ajax({url: url, password: password, username: username, complete: function(res, status) {
   console.log(status);
@@ -26,17 +30,14 @@ $.ajax({url: url, password: password, username: username, complete: function(res
     selector = " .status > tbody > tr:gt(0)";
 
     // regular pro smazani obrazku
-    var rimg = /<img(.|\s)*?\/?>/gi;
+    //var rimg = /<img(.|\s)*?\/?>/gi;
+    var rimg = /<img.*?src='([^']+)'.*?\/?>/gi;
 
     // nevim jestli by to neslo vic koser
     obj = $("<div />");
     // TODO: potrebujeme ziskat url obrazku, tak neco lepsiho nez je smazat
-    obj.html($("<div />").append(res.responseText.replace(rimg, "")).find(selector));
-  
-    // delete images?
-    obj.find("img").each( function() {
-      $(this).remove();
-    });
+    obj.html($("<div />").append(res.responseText.replace(rimg, "<span imgurl='$1' >")).find(selector));
+    //console.log(obj.html());
   
     var host = '';
   
@@ -81,18 +82,6 @@ $.ajax({url: url, password: password, username: username, complete: function(res
 
     Hosts.setBadge();
   }
-  /*
-     console.time("test2");
-     var o = '';
-     for (h in hosts) {
-       host = hosts[h];
-
-       if (host.warned > 0 )
-         o += '<li>'+host.name+'</li>';
-     }
-     $("#output").append('<ul>'+o+'</ul>');
-     console.timeEnd("test2");
-     */
 
 }});
 
