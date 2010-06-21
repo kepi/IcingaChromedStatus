@@ -19,13 +19,21 @@ function goto(url) {
     window.close();
 }
 
-$(document).ready(function() {
+function refresh() 
+{
+  chrome.extension.sendRequest({reqtype: "refresh-data"}, function(response) {
+    show();
+  });
+}
 
-
-  $("#tabs").tabs();
-
+function show()
+{
   chrome.extension.sendRequest({reqtype: "get-data"}, function(response) {
-    //console.log('data received');
+    if ( response.state == false ) {
+      console.log('fakt nejsou');
+      $("#output").html('data not ready yet');
+      return;
+    }
 
     var oo = '';
     var oh = '';
@@ -81,12 +89,23 @@ $(document).ready(function() {
     $("#output").html(ot+oo)
     $("#outputHosts").html('<table id="tableHosts">'+oh+'</table>');
     $("#outputServices").html('<table id="tableServices">'+os+'</table>');
-  })
+  });
+}
+
+// document is ready, we can start
+$(document).ready(function() {
+  // show tabs
+  $("#tabs").tabs();
+
+  // draw screen
+  show();
+
 });
 
 </script>
 </head>
 <body>
+<a href="#" onclick="javascript:refresh()">refresh</a>
 <div id="tabs">
   <ul>
     <li><a href="#tab-1"><span>Overview</span></a></li>

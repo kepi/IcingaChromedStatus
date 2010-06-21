@@ -7,85 +7,114 @@
 <body>
 
 <script>
-var Hosts = new Hosts();
 
-chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
-  if(request.reqtype == "get-data") {
-    //resp = Hosts.toJSON({warned: true});
-    resp = Hosts.toJSON();
-    console.log(resp);
-    sendResponse(resp);
-  }
-});
+var hosts = undefined;
 
 var username = window.localStorage.username;
 var password = window.localStorage.password;
 var url = window.localStorage.url+'?host=all';
 var url_base = window.localStorage.url_base;
 
-$.ajax({url: url, password: password, username: username, complete: function(res, status) {
-  console.log(status);
-  console.log(res.getAllResponseHeaders());
-  if ( status === "success" || status === "notmodified" ) {
-    selector = " .status > tbody > tr:gt(0)";
+function refreshData(sendResponse)
+{
+  hosts = new Hosts();
 
-    // regular pro smazani obrazku
-    //var rimg = /<img(.|\s)*?\/?>/gi;
-    var rimg = /<img.*?src='([^']+)'.*?\/?>/gi;
+  $.ajax({url: url, password: password, username: username, complete: function(res, status) {
+    console.log(status);
+    console.log(res.getAllResponseHeaders());
+    if ( status === "success" || status === "notmodified" ) {
+      var selector = " .status > tbody > tr:gt(0)";
 
-    // nevim jestli by to neslo vic koser
-    obj = $("<div />");
-    // TODO: potrebujeme ziskat url obrazku, tak neco lepsiho nez je smazat
-    obj.html($("<div />").append(res.responseText.replace(rimg, "<span imgurl='$1' >")).find(selector));
-    //console.log(obj.html());
-  
-    var host = '';
-  
-    var service = '';
-    var link = '';
-  
-    // browse rows
-    obj.find("> tr").each( function(index, el) {
-          // browse cols
-      $(el).find("> td").each( function(i, e) {
-        // first col, we solve host
-        if(i == 0)  {
-          val = $(e).find("a").text();
-          if ( val != '' ) {
-            // get Host state
-            var statusclass = $(this).attr('class');
-            host = val;
-            var href = $(e).find("a").attr('href');
-            h = new Host(host, href);
-            Hosts.addHost(h, statusclass);
-            //Hosts.setBadge();
-                //console.log("Found host: "+host+" with url "+href);
-          }
+      // regular pro smazani obrazku
+      //var rimg = /<img(.|\s)*?\/?>/gi;
+      var rimg = /<img.*?src='([^']+)'.*?\/?>/gi;
+
+      // nevim jestli by to neslo vic koser
+      var obj = $("<div />");
+      // TODO: potrebujeme ziskat url obrazku, tak neco lepsiho nez je smazat
+      obj.html($("<div />").append(res.responseText.replace(rimg, "<span imgurl='$1' >")).find(selector));
+      //console.log(obj.html());
+    
+      var host = '';
+    
+      var service = '';
+      var link = '';
+    
+      // browse rows
+      obj.find("> tr").each( function(index, el) {
+            // browse cols
+        $(el).find("> td").each( function(i, e) {
+          // first col, we solve host
+          if(i == 0)  {
+            val = $(e).find("a").text();
+            if ( val != '' ) {
+              // get Host state
+              var statusclass = $(this).attr('class');
+              host = val;
+              var href = $(e).find("a").attr('href');
+              h = new Host(host, href);
+              hosts.addHost(h, statusclass);
+              //hosts.setBadge();
+                  //console.log("Found host: "+host+" with url "+href);
             }
-        // second col is service
-        else if ( i == 1 ) {
-              service = $(e).find("a").text();
-              link = $(e).find("a").attr('href');
-        }
-        // service status
-        else if ( i == 2 ) {
-              var state = $(e).text();
-          s = new Service(service, link, state);
-          Hosts.getHost(host).addService(s);
-              //console.log("Found service: "+service+" with url "+href+" and state "+state);
-        }
-        // other columns
-        // 3 - last check
-        // 4 - duration
-        // 5 - attempt
-        // 6 - status
+              }
+          // second col is service
+          else if ( i == 1 ) {
+                service = $(e).find("a").text();
+                link = $(e).find("a").attr('href');
+          }
+          // service status
+          else if ( i == 2 ) {
+                var state = $(e).text();
+            s = new Service(service, link, state);
+            hosts.getHost(host).addService(s);
+                //console.log("Found service: "+service+" with url "+href+" and state "+state);
+          }
+          // other columns
+          // 3 - last check
+          // 4 - duration
+          // 5 - attempt
+          // 6 - status
+        });
       });
-    });
 
-    Hosts.setBadge();
+      hosts.setBadge();
+
+      if ( sendResponse != undefined )
+        sendResponse({state: true});
+    } else if ( sendResponse != undefined ) {
+        sendResponse({state: false});
+    }
+
+  }});
+}
+
+// TODO: locking aby se nemlatilo s rucnim reloadem
+// kazdych 60 sekund obnovime data
+refreshData();
+interval = setInterval("refreshData()",'30000')
+
+// requests from popup
+chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
+  // get stored data
+  if ( request.reqtype == "get-data" ) {
+    console.log('mam request');
+    if ( hosts == undefined) {
+      console.log('bida, nejsou data');
+      sendResponse({state: false});
+      return;
+    }
+
+    resp = hosts.toJSON();
+    resp.state = true;
+    //console.log(resp);
+    sendResponse(resp);
+
+  // refresh data
+  } else if ( request.reqtype == "refresh-data" ) {
+    refreshData(sendResponse);
   }
-
-}});
+});
 
   </script>
 </body>

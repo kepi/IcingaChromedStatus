@@ -181,7 +181,7 @@ function Host(name, link)
       services.push(this.services[s].toJSON(options));
 
     var states = this.getState('states_array');
-    console.log(states);
+    //console.log(states);
     
     return {name: this.name, link: this.link, services: services, states: states};
   }
