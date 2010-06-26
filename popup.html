@@ -26,6 +26,29 @@ function refresh()
   });
 }
 
+function z(num)
+{
+  if ( num < 10 ) {
+    num = '0'+num;
+  }
+  return num;
+}
+
+function rescheduleService(hostname, servicename)
+{
+  //$.post(https://morbo.igloonet.cz/icinga/cgi-bin/cmd.cgi?cmd_typ=7&host=boxy&service=Debian+packages&force_check
+  //console.log(window.localStorage.url_icinga+'/cmd.cgi');
+
+  https://morbo.igloonet.cz/icinga/cgi-bin/cmd.cgi?cmd_typ=7&cmd_mod=2&host=boxy&service=Debian+packages&start_time=26-06-2010+22%3A44%3A24&force_check=on&btnSubmit=Commit
+
+  var t = new Date();
+  var time = z(t.getDate()) + '-' + z(t.getMonth()+1) + '-' + z(t.getFullYear()) + '+' + z(t.getHours()) + '%3A' + z(t.getMinutes()) + '%3A' + z(t.getSeconds());
+  var dataString = 'cmd_typ=7&cmd_mod=2&host='+ hostname + '&service=' + servicename.replace(/ /, "+") + '&start_time='+time+'&force_check=on';
+  console.log(dataString);
+  //$.post(window.localStorage.url_icinga+'/cmd.cgi', {"host": hostname, "service": servicename, "start_time": "26-06-2010 22:17:00", "force_check": true});
+  $.post(window.localStorage.url_icinga+'/cmd.cgi', dataString, function(data, textStatus) { console.log(textStatus); });
+}
+
 function show()
 {
   chrome.extension.sendRequest({reqtype: "get-data"}, function(response) {
@@ -54,7 +77,7 @@ function show()
       // browse all services of host
       for (var s in host.services ) {
         var service = host.services[s];
-        var line = '<tr class="service"><td style="width: 30px;">&nbsp;</td><td class="normal"><a href="#" onclick="goto(\''+window.localStorage.url_icinga+'/'+service.link+'\')">'+service.name+'</td><td class="state '+stateClass(service.state)+'">'+stateClass(service.state, true)+'</td></tr>';
+        var line = '<tr class="service"><td style="width: 30px;">&nbsp;</td><td class="normal"><a href="#" onclick="goto(\''+window.localStorage.url_icinga+'/'+service.link+'\')">'+service.name+'</td><td class="state '+stateClass(service.state)+'">'+stateClass(service.state, true)+'</td><td><a href="#" onclick="rescheduleService(\''+host.name+'\',\''+service.name+'\')">resch</a></td></tr>';
 
         // add to overview only if not ok
         if ( service.state > 0 )
