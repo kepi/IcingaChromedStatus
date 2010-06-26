@@ -39,9 +39,12 @@ function refreshData(sendResponse)
     
       var service = '';
       var link = '';
+      var ackService = false;
+      var ackHost = false;
     
       // browse rows
       obj.find("> tr").each( function(index, el) {
+        ack = false;
             // browse cols
         $(el).find("> td").each( function(i, e) {
           // first col, we solve host
@@ -53,20 +56,23 @@ function refreshData(sendResponse)
               host = val;
               var href = $(e).find("a").attr('href');
               h = new Host(host, href);
+              // TODO: pridat kontrolu acku u hosta
               hosts.addHost(h, statusclass);
-              //hosts.setBadge();
-                  //console.log("Found host: "+host+" with url "+href);
+              ackHost = false;
             }
               }
           // second col is service
           else if ( i == 1 ) {
                 service = $(e).find("a").text();
                 link = $(e).find("a").attr('href');
+                acked = $(e).find("span[imgurl*='ack.gif']").attr('imgurl');
+                ackService = ( acked == undefined ) ? false : true;
           }
           // service status
           else if ( i == 2 ) {
-                var state = $(e).text();
-            s = new Service(service, link, state);
+            var state = $(e).text();
+
+            s = new Service(service, link, state, ackService);
             hosts.getHost(host).addService(s);
                 //console.log("Found service: "+service+" with url "+href+" and state "+state);
           }

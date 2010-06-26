@@ -42,10 +42,10 @@ function show()
     // browse all hosts
     for (var h in response.hosts) {
       var host = response.hosts[h];
-      var line = '<tr class="host"><td colspan="2" class="normal"><a href="#" onclick="goto(\''+window.localStorage.url_icinga+'/'+host.link+'\')">'+host.name+'</a></td><td class="state '+stateClass(host.states['HOST'])+'">'+stateClass(host.states['HOST'], true)+'</td></tr>';
+      var line = '<tr class="host"><td colspan="2" class="normal"><a href="#" onclick="goto(\''+window.localStorage.url_icinga+'/'+host.link+'\')">'+host.name+'</a></td><td class="state '+stateClass(host.states_all['HOST'])+'">'+stateClass(host.states_all['HOST'], true)+'</td></tr>';
 
       // add to overview only if not ok
-      if ( host.states['HOST'] > 0 || host.states['WRONG'] > 0 )
+      if ( host.states_all['HOST'] > 0 || host.states_all['WRONG'] > 0 )
         oo += line;
 
       oh += line;
@@ -69,20 +69,20 @@ function show()
     var ot = '<div id="totalsHosts"><h3>Host Status</h3><table>'+
        '<tr><th>Up</th><th>Down</th><th>Unr</th><th>Pend</th></tr>'+
        '<tr>'+
-       '<td class="ok">'+response.totals_hosts[0]+'</td>'+
-       '<td class="cri">'+response.totals_hosts[8]+'</td>'+
-       '<td class="unr">'+response.totals_hosts[4]+'</td>'+
-       '<td class="pend">'+response.totals_hosts[1]+'</td>'+
+       '<td class="ok">'+response.totals_hosts[0]+'/'+response.totals_all_hosts[0]+'</td>'+
+       '<td class="cri">'+response.totals_hosts[8]+'/'+response.totals_all_hosts[8]+'</td>'+
+       '<td class="unr">'+response.totals_hosts[4]+'/'+response.totals_all_hosts[4]+'</td>'+
+       '<td class="pend">'+response.totals_hosts[1]+'/'+response.totals_all_hosts[1]+'</td>'+
        '</tr></table></div>';
 
     ot = ot + '<div id="totalsServices"><h3>Service Status</h3><table>'+
        '<tr><th>Ok</th><th>Warn</th><th>Unkn</th><th>Crit</th><th>Pend</th></tr>'+
        '<tr>'+
-       '<td class="ok">'+response.totals_services[0]+'</td>'+
-       '<td class="warn">'+response.totals_services[4]+'</td>'+
-       '<td class="unkn">'+response.totals_services[2]+'</td>'+
-       '<td class="cri">'+response.totals_services[8]+'</td>'+
-       '<td class="pend">'+response.totals_services[1]+'</td>'+
+       '<td class="ok">'+response.totals_services[0]+'/'+response.totals_all_services[0]+'</td>'+
+       '<td class="warn">'+response.totals_services[4]+'/'+response.totals_all_services[4]+'</td>'+
+       '<td class="unkn">'+response.totals_services[2]+'/'+response.totals_all_services[2]+'</td>'+
+       '<td class="cri">'+response.totals_services[8]+'/'+response.totals_all_services[8]+'</td>'+
+       '<td class="pend">'+response.totals_services[1]+'/'+response.totals_all_services[1]+'</td>'+
        '</tr></table></div><br class="clear" />';
 
 

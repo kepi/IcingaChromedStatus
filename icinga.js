@@ -40,8 +40,15 @@ function Hosts()
     // set needed variables
     this.totals_hosts = {0: 0, 1: 0, 4: 0, 8: 0};
     this.totals_services = {0: 0, 1: 0, 2: 0, 4: 0, 8: 0};
+
+    this.totals_all_hosts = {0: 0, 1: 0, 4: 0, 8: 0};
+    this.totals_all_services = {0: 0, 1: 0, 2: 0, 4: 0, 8: 0};
+
     this.worst_host = 0;
     this.worst_service = 0;
+
+    this.worst_all_host = 0;
+    this.worst_all_service = 0;
 
     // cycle through all hosts
     for (var h in this.hosts) {
@@ -65,6 +72,25 @@ function Hosts()
       this.totals_services[STATE_UNKN] += states[STATE_UNKN];
       this.totals_services[STATE_WARN] += states[STATE_WARN];
       this.totals_services[STATE_CRIT] += states[STATE_CRIT];
+
+      // get service states_all array 
+      var states_all = host.getState('states_array_all');
+
+      // find worst_all host state
+      if ( host.state > this.worst_all_host  )
+        this.worst_all_host = host.state;
+
+      // find worst_all service state
+      if ( states_all.WORST > this.worst_all_service )
+        this.worst_all_service = states_all.WORST;
+    
+      // sum it
+      this.totals_all_hosts[host.state] += 1;
+      this.totals_all_services[STATE_OK] += states_all[STATE_OK];
+      this.totals_all_services[STATE_PEND] += states_all[STATE_PEND];
+      this.totals_all_services[STATE_UNKN] += states_all[STATE_UNKN];
+      this.totals_all_services[STATE_WARN] += states_all[STATE_WARN];
+      this.totals_all_services[STATE_CRIT] += states_all[STATE_CRIT];
     }
   }
 
@@ -115,7 +141,8 @@ function Hosts()
         hosts.push(this.hosts[h].toJSON(options));
     }
 
-    return {hosts: hosts, totals_hosts: this.totals_hosts, totals_services: this.totals_services};
+    return {hosts: hosts, totals_hosts: this.totals_hosts, totals_services: this.totals_services, 
+              totals_all_hosts: this.totals_all_hosts, totals_all_services: this.totals_all_services};
   }
 }
 
@@ -125,7 +152,9 @@ function Host(name, link)
   this.link = link;
   this.services = new Array;
   this.state = STATE_OK;
+  this.ack = ack;
   this.service_states = {HOST: this.state, WRONG: 0, WORST: 0, 0: 0, 1: 0, 2: 0, 4: 0, 8: 0};
+  this.ervice_states_all = {HOST: this.state, WRONG: 0, WORST: 0, 0: 0, 1: 0, 2: 0, 4: 0, 8: 0};
 
   this.setState = function(state)
   {
@@ -151,27 +180,48 @@ function Host(name, link)
 
     // TODO: cachovat
 
+    // we need to reset it
+    this.service_states = {HOST: this.state, WRONG: 0, WORST: 0, 0: 0, 1: 0, 2: 0, 4: 0, 8: 0};
+    this.service_states_all = {HOST: this.state, WRONG: 0, WORST: 0, 0: 0, 1: 0, 2: 0, 4: 0, 8: 0};
+
     // we have to check for state
     for (var s in this.services) {
       // count this state
-      ++this.service_states[this.services[s].state];
-      // count all wrong states
+      ++this.service_states_all[this.services[s].state];
+      // count all wrong states_all
       if ( this.services[s].state > STATE_OK )
-        ++this.service_states.WRONG;
+        ++this.service_states_all.WRONG;
       // set worst state
-      if ( this.services[s].state > this.service_states.WORST )
-        this.service_states.WORST = this.services[s].state;
+      if ( this.services[s].state > this.service_states_all.WORST )
+        this.service_states_all.WORST = this.services[s].state;
+      
+      if ( !this.services[s].ack ) {
+        // count this state
+        ++this.service_states[this.services[s].state];
+        // count all wrong states
+        if ( this.services[s].state > STATE_OK )
+          ++this.service_states.WRONG;
+        // set worst state
+        if ( this.services[s].state > this.service_states.WORST )
+          this.service_states.WORST = this.services[s].state;
+      }
     }
 
     // default - return false if anything is wrong
     if ( what == undefined ) {
       return ( this.state == STATE_OK && this.service_states.WRONG == 0 )  ? true : false;
-    } else if ( what == 'worst' ) {
-      return this.service_states.WORST;
     } else if ( what == 'states_array' ) {
       return this.service_states;
+    } else if ( what == 'states_array_all' ) {
+      return this.service_states_all;
     }
 
+/*
+    } else if ( what == 'worst' ) {
+      return this.service_states.WORST;
+    } else if ( what == 'worst_all' ) {
+      return this.service_states_all.WORST;
+      */
   }
 
   this.toJSON = function(options)
@@ -181,13 +231,13 @@ function Host(name, link)
       services.push(this.services[s].toJSON(options));
 
     var states = this.getState('states_array');
-    //console.log(states);
+    var states_all = this.getState('states_array_all');
     
-    return {name: this.name, link: this.link, services: services, states: states};
+    return {name: this.name, link: this.link, services: services, states: states, states_all: states_all};
   }
 }
 
-function Service(name, link, state) 
+function Service(name, link, state, ack) 
 {
 
   if ( state == 'OK' )
@@ -203,9 +253,10 @@ function Service(name, link, state)
 
   this.name = name;
   this.link = link;
+  this.ack = ack;
 
   this.toJSON = function(options)
   {
-    return {name: this.name, link: this.link, state: this.state.toString()};
+    return {name: this.name, link: this.link, state: this.state.toString(), ack: this.ack};
   }
 }
