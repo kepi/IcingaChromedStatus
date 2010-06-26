@@ -22,7 +22,7 @@ function Hosts()
   this.totals_hosts = {0: 0, 1: 0, 4: 0, 8: 0};
   this.totals_services = {0: 0, 1: 0, 2: 0, 4: 0, 8: 0};
 
-  this.addHost = function(host, statusclass)
+  this.addHost = function(host, statusclass, ack)
   {
     // TODO: vyresit dalsi stavy
     if ( statusclass == 'statusOdd' || statusclass == 'statusEven' )
@@ -30,7 +30,7 @@ function Hosts()
     else
       state = HSTATE_DOWN;
 
-    host.setState(state);
+    host.setState(state, ack);
 
     this.hosts[host.name] = host;
   }
@@ -58,7 +58,7 @@ function Hosts()
       var states = host.getState('states_array');
 
       // find worst host state
-      if ( host.state > this.worst_host  )
+      if ( !host.ack && host.state > this.worst_host  )
         this.worst_host = host.state;
 
       // find worst service state
@@ -66,7 +66,8 @@ function Hosts()
         this.worst_service = states.WORST;
     
       // sum it
-      this.totals_hosts[host.state] += 1;
+      hostState = host.ack ? 0 : host.state;
+      this.totals_hosts[hostState] += 1;
       this.totals_services[STATE_OK] += states[STATE_OK];
       this.totals_services[STATE_PEND] += states[STATE_PEND];
       this.totals_services[STATE_UNKN] += states[STATE_UNKN];
@@ -153,13 +154,17 @@ function Host(name, link)
   this.services = new Array;
   this.state = STATE_OK;
   this.ack = ack;
-  this.service_states = {HOST: this.state, WRONG: 0, WORST: 0, 0: 0, 1: 0, 2: 0, 4: 0, 8: 0};
-  this.ervice_states_all = {HOST: this.state, WRONG: 0, WORST: 0, 0: 0, 1: 0, 2: 0, 4: 0, 8: 0};
+  this.service_states = {HOST: 0, WRONG: 0, WORST: 0, 0: 0, 1: 0, 2: 0, 4: 0, 8: 0};
+  this.service_states_all = {HOST: 0, WRONG: 0, WORST: 0, 0: 0, 1: 0, 2: 0, 4: 0, 8: 0};
 
-  this.setState = function(state)
+  this.setState = function(state, ack)
   {
+    this.ack = ack;
     this.state = state;
-    this.service_states.HOST = state;
+
+    this.service_states.HOST = this.ack ? 0 : state;
+
+    this.service_states_all.HOST = state;
   }
 
   this.addService = function(service) 
@@ -174,15 +179,11 @@ function Host(name, link)
 
   this.getState = function(what)
   {
-    // only host state, we can return
-    if ( what == 'own' )
-      return this.state;
-
     // TODO: cachovat
 
     // we need to reset it
-    this.service_states = {HOST: this.state, WRONG: 0, WORST: 0, 0: 0, 1: 0, 2: 0, 4: 0, 8: 0};
-    this.service_states_all = {HOST: this.state, WRONG: 0, WORST: 0, 0: 0, 1: 0, 2: 0, 4: 0, 8: 0};
+    this.service_states = {HOST: 0, WRONG: 0, WORST: 0, 0: 0, 1: 0, 2: 0, 4: 0, 8: 0};
+    this.service_states_all = {HOST: 0, WRONG: 0, WORST: 0, 0: 0, 1: 0, 2: 0, 4: 0, 8: 0};
 
     // we have to check for state
     for (var s in this.services) {

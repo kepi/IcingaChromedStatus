@@ -55,10 +55,11 @@ function refreshData(sendResponse)
               var statusclass = $(this).attr('class');
               host = val;
               var href = $(e).find("a").attr('href');
+              acked = $(e).find("span[imgurl*='ack.gif']").attr('imgurl');
+              ackHost = ( acked == undefined ) ? false : true;
               h = new Host(host, href);
               // TODO: pridat kontrolu acku u hosta
-              hosts.addHost(h, statusclass);
-              ackHost = false;
+              hosts.addHost(h, statusclass, ackHost);
             }
               }
           // second col is service
