@@ -1,10 +1,16 @@
 <html>
-<head><title>Icinga - Options</title>
-<link type="text/css" rel="stylesheet" href="style.css" />
+<head>
+  <title>Icinga - Options</title>
+  <script src="inc/jquery-1.4.2.min.js"></script>
+
+  <link href="inc/jquery-ui/css/smoothness/jquery-ui-1.8.2.custom.css" rel="stylesheet" type="text/css"/>
+  <script src="inc/jquery-ui/js/jquery-ui-1.8.2.custom.min.js"></script>
+
+  <link href="icinga.css" rel="stylesheet" type="text/css"/>
 
 <script type="text/javascript">
-// Saves options to localStorage.
-function save_options() {
+  // Saves options to localStorage.
+  function save_options() {
   if (!window.localStorage) {
           alert("Error local storage is unavailable.");
           window.close();
@@ -25,6 +31,9 @@ function save_options() {
   setTimeout(function() {
     status.innerHTML = "";
   }, 750);
+
+  // refresh data
+  chrome.extension.sendRequest({reqtype: "refresh-data"});
 }
 
 // Restores select box state to saved value from localStorage.
@@ -33,23 +42,41 @@ function restore_options() {
   document.getElementById("url").value = window.localStorage.url;
 }
 
+$(document).ready(function() {
+  // show tabs
+  $("#tabs").tabs();
+  restore_options();
+});
+
 </script>
 </head>
 
-<body onload="restore_options()" id="options">
-<h3>Icinga &ndash; Options</h3>
-<div>
-<label for="username">Username</label> <input type="test" name="username" id="username" />
-</div>
-<div>
-<label for="password">Password</label> <input type="password" name="password" id="password" />
-</div>
-<div>
-<label for="url">URL</label> <input type="test" name="url" id="url" />
+<body id="options">
+<h3>Icinga Chromed Status &ndash; Options</h3>
+
+<div id="tabs">
+  <ul>
+    <li><a href="#tab-1"><span>Main</span></a></li>
+  </ul>
+
+  <div id="tab-1">
+    <div>
+    <label for="username">Username</label> <input type="test" name="username" id="username" placeholder="Your Icinga Username" />
+    </div>
+    <div>
+    <label for="password">Password</label> <input type="password" name="password" id="password" />
+    </div>
+    <div>
+    <label for="url">URL to status.cgi</label> <input type="test" placeholder="i.e. https://monitoring.domain.com/icinga/cgi-bin/status.cgi" name="url" id="url" style="width: 400px;" />
+    </div>
+
+    <br />
+    <button onclick="save_options()">Save</button>
+    <span id="status"></span>
+
+  </div>
+  <!-- end of first tab -->
 </div>
 
-<br />
-<button onclick="save_options()">Save</button>
-<span id="status"></span>
 </body>
 </html>

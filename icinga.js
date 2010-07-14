@@ -9,6 +9,19 @@ const HSTATE_UP   = 0;
 const HSTATE_PEND = 1;
 const HSTATE_UNR  = 4;
 const HSTATE_DOWN = 8;
+  
+var debug = false;
+
+function debug_log(msg)
+{
+  if(debug) { console.log(msg) }
+}
+
+
+function clearBadge()
+{
+  chrome.browserAction.setBadgeText({text: ''});
+}
 
 function stateClass(state, full)
 {

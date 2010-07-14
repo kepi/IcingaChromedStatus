@@ -7,21 +7,59 @@
 <body>
 
 <script>
-
 var hosts = undefined;
+var error = undefined;
+var refreshStatus = {state: false, error: undefined};
 
-var username = window.localStorage.username;
-var password = window.localStorage.password;
-var url = window.localStorage.url+'?host=all';
-var url_base = window.localStorage.url_base;
+$("<div />").ajaxError(function() { debug_log('chybaaaa'); });
 
-function refreshData(sendResponse)
+function respond(resp, sendResponse)
 {
-  hosts = new Hosts();
+  if ( sendResponse != undefined )
+    sendResponse({state: resp.state, error: resp.error})
 
-  $.ajax({url: url, password: password, username: username, complete: function(res, status) {
-    console.log(status);
-    console.log(res.getAllResponseHeaders());
+  refreshStatus.state = resp.state;
+  refreshStatus.error = resp.error;
+}
+
+function refreshData(refreshStatus, sendResponse)
+{
+  error = undefined;
+  refreshStatus.state = false;
+
+  // basic info from user setup
+  var username = window.localStorage.username;
+  var password = window.localStorage.password;
+  var url = window.localStorage.url;
+  var url_base = window.localStorage.url_base;
+  
+  // setup needs url
+  if ( url == '' ) {
+    debug_log('Url not defined');
+    error = 'need-setup';
+
+    // we need to handle response
+    respond({state: false, error: error}, sendResponse);
+
+    return false;
+  }
+
+  hosts = new Hosts();
+  
+  // url is ok, add host=all for now
+  url = url+'?host=all';
+
+  // try to get data from icinga
+  $.ajax({global: false, url: url, password: password, username: username, complete: function(res, status) {
+    //respond({state: false, error: 'au'}, sendResponse);
+    debug_log(res.status);
+    if ( res.status != 200 ) {
+      error = res.status == 404  ? 'bad-url' : 'unknown';
+      respond({state: false, error: error}, sendResponse);
+      return;
+    }
+
+    debug_log(res.getAllResponseHeaders());
     if ( status === "success" || status === "notmodified" ) {
       var selector = " .status > tbody > tr:gt(0)";
 
@@ -33,7 +71,6 @@ function refreshData(sendResponse)
       var obj = $("<div />");
       // TODO: potrebujeme ziskat url obrazku, tak neco lepsiho nez je smazat
       obj.html($("<div />").append(res.responseText.replace(rimg, "<span imgurl='$1' >")).find(selector));
-      //console.log(obj.html());
     
       var host = '';
     
@@ -75,7 +112,7 @@ function refreshData(sendResponse)
 
             s = new Service(service, link, state, ackService);
             hosts.getHost(host).addService(s);
-                //console.log("Found service: "+service+" with url "+href+" and state "+state);
+                //debug_log("Found service: "+service+" with url "+href+" and state "+state);
           }
           // other columns
           // 3 - last check
@@ -87,10 +124,9 @@ function refreshData(sendResponse)
 
       hosts.setBadge();
 
-      if ( sendResponse != undefined )
-        sendResponse({state: true});
-    } else if ( sendResponse != undefined ) {
-        sendResponse({state: false});
+      respond({state: true, error: undefined}, sendResponse);
+    } else {
+      respond({state: false, error: 'unhandled state'}, sendResponse);
     }
 
   }});
@@ -98,28 +134,38 @@ function refreshData(sendResponse)
 
 // TODO: locking aby se nemlatilo s rucnim reloadem
 // kazdych 60 sekund obnovime data
-refreshData();
-interval = setInterval("refreshData()",'30000')
+refreshData(refreshStatus);
+interval = setInterval("refreshData(refreshStatus)",'30000')
 
 // requests from popup
 chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
   // get stored data
+  debug_log('request received: ' + request.reqtype);
   if ( request.reqtype == "get-data" ) {
-    console.log('mam request');
-    if ( hosts == undefined) {
-      console.log('bida, nejsou data');
+
+    // we need setup first
+    if ( error != undefined ) {
+      if ( sendResponse != undefined )
+        sendResponse({state: false, error: error});
+      return;
+    }
+    else if ( hosts == undefined) {
+      debug_log('Oooops, we have no data.');
       sendResponse({state: false});
       return;
     }
 
     resp = hosts.toJSON();
-    resp.state = true;
-    //console.log(resp);
+    resp.state = refreshStatus.state;
+    resp.error = refreshStatus.error;
     sendResponse(resp);
+
+    if ( refreshStatus.error ) 
+      clearBadge();
 
   // refresh data
   } else if ( request.reqtype == "refresh-data" ) {
-    refreshData(sendResponse);
+    refreshData(refreshStatus,sendResponse);
   }
 });
 
