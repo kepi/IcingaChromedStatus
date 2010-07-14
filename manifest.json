@@ -1,7 +1,7 @@
 {
   "name": "Icinga Chromed Status",
   "version": "0.0.1",
-  "description": "Icinga Status monitor and control for Google Chrome and Chromium.",
+  "description": "Icinga Status monitor for Google Chrome and Chromium.",
 
   "background_page": "background.html",
   "options_page": "options.html",
