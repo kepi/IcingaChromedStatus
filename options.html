@@ -38,8 +38,10 @@
 
 // Restores select box state to saved value from localStorage.
 function restore_options() {
-  document.getElementById("username").value = window.localStorage.username;
-  document.getElementById("url").value = window.localStorage.url;
+  if ( window.localStorage.username != undefined )
+    document.getElementById("username").value = window.localStorage.username;
+  if ( window.localStorage.url != undefined )
+    document.getElementById("url").value = window.localStorage.url;
 }
 
 $(document).ready(function() {
