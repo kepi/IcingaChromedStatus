@@ -34,7 +34,7 @@ function refreshData(refreshStatus, sendResponse)
   var url_base = window.localStorage.url_base;
   
   // setup needs url
-  if ( url == '' ) {
+  if ( url == '' || url == undefined ) {
     debug_log('Url not defined');
     error = 'need-setup';
 
