@@ -72,3 +72,11 @@ body#options label {
   position: relative;
   top: 3px;
 }
+
+.tools {
+  white-space: nowrap;
+}
+
+.tools a {
+  float: left;
+}
