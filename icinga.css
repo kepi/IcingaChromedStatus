@@ -80,3 +80,7 @@ body#options label {
 .tools a {
   float: left;
 }
+
+.center {
+  text-align: center;
+}
