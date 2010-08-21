@@ -132,10 +132,32 @@ function refreshData(refreshStatus, sendResponse)
   }});
 }
 
+var intervalId = undefined;
+
+function setRefreshInterval()
+{
+  // clear old interval
+  if ( intervalId == undefined )
+    clearInterval(intervalId);
+
+  // set refresh interval from options
+  var refreshInterval = window.localStorage.refresh;
+
+  if ( refreshInterval == undefined )
+    refreshInterval = 30000;
+  else
+    refreshInterval *= 1000;
+
+  // set refresh only if greater than 0
+  if ( refreshInterval > 0 ) {
+    debug_log("Refresh interval set to "+refreshInterval+" miliseconds");
+    intervalId = setInterval("refreshData(refreshStatus)", refreshInterval);
+  }
+}
+
 // TODO: locking aby se nemlatilo s rucnim reloadem
-// kazdych 60 sekund obnovime data
 refreshData(refreshStatus);
-interval = setInterval("refreshData(refreshStatus)",'30000')
+setRefreshInterval();
 
 // requests from popup
 chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
@@ -166,6 +188,7 @@ chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
   // refresh data
   } else if ( request.reqtype == "refresh-data" ) {
     refreshData(refreshStatus,sendResponse);
+    setRefreshInterval();
   }
 });
 
