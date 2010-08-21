@@ -11,7 +11,7 @@ var hosts = undefined;
 var error = undefined;
 var refreshStatus = {state: false, error: undefined};
 
-$("<div />").ajaxError(function() { debug_log('chybaaaa'); });
+$("<div />").ajaxError(function() { debug_log('got ajax error'); });
 
 function respond(resp, sendResponse)
 {
