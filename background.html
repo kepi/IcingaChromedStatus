@@ -70,7 +70,7 @@ function refreshData(refreshStatus, sendResponse)
       // nevim jestli by to neslo vic koser
       var obj = $("<div />");
       // TODO: potrebujeme ziskat url obrazku, tak neco lepsiho nez je smazat
-      obj.html($("<div />").append(res.responseText.replace(rimg, "<span imgurl='$1' >")).find(selector));
+      obj.html($("<div />").append(res.responseText.replace(rimg, "<span imgurl='$1' >").replace(/<script.*?>.*?<\/script>/gmi, '')).find(selector));
     
       var host = '';
     
