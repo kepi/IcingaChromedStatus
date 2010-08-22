@@ -36,24 +36,33 @@ function z(num)
   return num;
 }
 
-function rescheduleService(hostname, servicename)
+function sendCommand(command, hostname, servicename)
 {
-  var t = new Date();
-  var time = z(t.getDate()) + '-' + z(t.getMonth()+1) + '-' + z(t.getFullYear()) + '+' + z(t.getHours()) + '%3A' + z(t.getMinutes()) + '%3A' + z(t.getSeconds());
-  var dataString = 'cmd_typ=7&cmd_mod=2&host='+ hostname.toLowerCase() + '&service=' + servicename.replace(/ /, "+") + '&start_time='+time+'&force_check=on&submit=Commit';
-  debug_log(window.localStorage.url_icinga+'/cmd.cgi'+dataString);
-  $.post(window.localStorage.url_icinga+'/cmd.cgi', dataString, function(data, textStatus) { debug_log(textStatus); debug_log(data);});
-}
-/*
-function rescheduleService(hostname, servicename)
-{
-  goto(window.localStorage.url_icinga+'/cmd.cgi?cmd_typ=7&host='+hostname.toLowerCase()+'&service='+servicename.replace(/ /, "+")+'&force_check');
-}
-*/
+  // basic variables
+  hostname = hostname.toLowerCase();
+  cmds = {'ack': 33, 'reschedule': 96};
+  cmd_url = window.localStorage.url_icinga + '/cmd.cgi';
+  service_query = '';
 
-function ackService(hostname, servicename)
-{
-  goto(window.localStorage.url_icinga+'/cmd.cgi?cmd_typ=34&host='+hostname.toLowerCase()+'&service='+servicename.replace(/ /, "+"));
+  // run command for service not for host
+  if ( servicename != undefined ) {
+    cmds = {'ack': 34, 'reschedule': 7};
+    servicename = servicename.replace(/ /, "+");
+    service_query = '&service='+servicename;
+  }
+
+  // Acknowledge host or service problem
+  if ( command == 'ack' ) {
+    goto(cmd_url+'?cmd_typ='+cmds[command]+'&host='+hostname+service_query);
+
+  // Reschedule next check of host or service
+  } else if ( command == 'reschedule' ) {
+    var t = new Date();
+    var time = z(t.getDate()) + '-' + z(t.getMonth()+1) + '-' + z(t.getFullYear()) + '+' + z(t.getHours()) + '%3A' + z(t.getMinutes()) + '%3A' + z(t.getSeconds());
+
+    var dataString = 'cmd_typ=' + cmds[command] + '&cmd_mod=2&host=' + hostname + service_query + '&start_time=' + time + '&force_check=on&submit=Commit';
+    $.post(cmd_url, dataString, function(data, textStatus) { debug_log(textStatus); debug_log(data); });
+  }
 }
         
 function show()
@@ -89,7 +98,10 @@ function show()
     // browse all hosts
     for (var h in response.hosts) {
       var host = response.hosts[h];
-      var line = '<tr class="host"><td colspan="2" class="normal"><a href="#" onclick="goto(\''+window.localStorage.url_icinga+'/'+host.link+'\')">'+host.name+'</a></td><td class="state '+stateClass(host.state)+'">'+stateClass(host.state, true)+'</td></tr>';
+      var reschedule='<a title="Reschedule check of this host" class="ui-icon ui-icon-refresh" href="#" onclick="sendCommand(\'reschedule\', \''+host.name+'\')">resch</a>';
+      var ack='<a title="Acknowledge this problem" class="ui-icon ui-icon-wrench" href="#" onclick="sendCommand(\'ack\', \''+host.name+'\')">ack</a>';
+
+      var line = '<tr class="host"><td colspan="2" class="normal"><a href="#" onclick="goto(\''+window.localStorage.url_icinga+'/'+host.link+'\')">'+host.name+'</a>'+(host.ack?'&nbsp;<span class="ui-icon ui-icon-check" style="float: right;" title="Acknowledged">&nbsp;</span>':'')+'</td><td class="state '+stateClass(host.state)+'">'+stateClass(host.state, true)+'</td><td class="tools">'+reschedule+(host.ack || host.state == 0 ? '' : ack)+'</td></tr>';
 
       // add to overview only if not ok
       if ( host.states_all['HOST'] > 0 || host.states_all['WRONG'] > 0 )
@@ -101,11 +113,10 @@ function show()
       // browse all services of host
       for (var s in host.services ) {
         var service = host.services[s];
-        //var reschedule='<a title="Immediately reschedule check of this service" class="ui-icon ui-icon-refresh" href="#" onclick="rescheduleService(\''+host.name+'\',\''+service.name+'\')">resch</a>';
-        var reschedule='<a title="Reschedule check of this service" class="ui-icon ui-icon-refresh" href="#" onclick="rescheduleService(\''+host.name+'\',\''+service.name+'\')">resch</a>';
-        var ack='<a title="Acknowledge this problem" class="ui-icon ui-icon-wrench" href="#" onclick="ackService(\''+host.name+'\',\''+service.name+'\')">ack</a>';
+        var reschedule='<a title="Reschedule check of this service" class="ui-icon ui-icon-refresh" href="#" onclick="sendCommand(\'reschedule\', \''+host.name+'\',\''+service.name+'\')">resch</a>';
+        var ack='<a title="Acknowledge this problem" class="ui-icon ui-icon-wrench" href="#" onclick="sendCommand(\'ack\', \''+host.name+'\',\''+service.name+'\')">ack</a>';
 
-        var line = '<tr class="service"><td style="width: 30px;">&nbsp;</td><td class="normal" style="white-space: nowrap;"><a href="#" onclick="goto(\''+window.localStorage.url_icinga+'/'+service.link+'\')">'+service.name+(service.ack?'&nbsp;<span class="ui-icon ui-icon-check" style="float: right;" title="Acknowledged">&nbsp;</span>':'')+'</td><td class="state '+stateClass(service.state)+'">'+stateClass(service.state, true)+'</td><td class="tools">'+reschedule+(service.ack || service.state == 0 ? '' : ack)+'</td></tr>';
+        var line = '<tr class="service"><td style="width: 30px;">&nbsp;</td><td class="normal" style="white-space: nowrap;"><a href="#" onclick="goto(\''+window.localStorage.url_icinga+'/'+service.link+'\')">'+service.name+'</a>'+(service.ack?'&nbsp;<span class="ui-icon ui-icon-check" style="float: right;" title="Acknowledged">&nbsp;</span>':'')+'</td><td class="state '+stateClass(service.state)+'">'+stateClass(service.state, true)+'</td><td class="tools">'+reschedule+(service.ack || service.state == 0 ? '' : ack)+'</td></tr>';
 
 
         // add to overview only if not ok
