@@ -89,7 +89,7 @@ function show()
     // browse all hosts
     for (var h in response.hosts) {
       var host = response.hosts[h];
-      var line = '<tr class="host"><td colspan="2" class="normal"><a href="#" onclick="goto(\''+window.localStorage.url_icinga+'/'+host.link+'\')">'+host.name+'</a></td><td class="state '+stateClass(host.states_all['HOST'])+'">'+stateClass(host.states_all['HOST'], true)+'</td></tr>';
+      var line = '<tr class="host"><td colspan="2" class="normal"><a href="#" onclick="goto(\''+window.localStorage.url_icinga+'/'+host.link+'\')">'+host.name+'</a></td><td class="state '+stateClass(host.state)+'">'+stateClass(host.state, true)+'</td></tr>';
 
       // add to overview only if not ok
       if ( host.states_all['HOST'] > 0 || host.states_all['WRONG'] > 0 )

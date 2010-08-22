@@ -247,7 +247,7 @@ function Host(name, link)
     var states = this.getState('states_array');
     var states_all = this.getState('states_array_all');
     
-    return {name: this.name, link: this.link, services: services, states: states, states_all: states_all};
+    return {name: this.name, link: this.link, services: services, state: this.state, states: states, states_all: states_all};
   }
 }
 
