@@ -159,11 +159,20 @@ function setRefreshInterval()
 refreshData(refreshStatus);
 setRefreshInterval();
 
-// requests from popup
+// REQUEST LISTENER
 chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
-  // get stored data
-  debug_log('request received: ' + request.reqtype);
-  if ( request.reqtype == "get-data" ) {
+
+  // function for reporting what background script supports
+  if(request.reqtype == 'supports') {
+    var state = 'no';
+
+    if ( request.what == 'dummy' )
+      state = 'ok';
+
+    sendResponse({state: state});
+
+    // get stored data
+  } else if ( request.reqtype == "get-data" ) {
 
     // we need setup first
     if ( error != undefined ) {
@@ -185,11 +194,19 @@ chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
     if ( refreshStatus.error ) 
       clearBadge();
 
-  // refresh data
+    // refresh data
   } else if ( request.reqtype == "refresh-data" ) {
     refreshData(refreshStatus,sendResponse);
     setRefreshInterval();
-  }
+
+    // reload background page
+  } else if(request.reqtype == 'reload-background') {
+    window.location.reload();
+
+    // unknown request
+  } else
+    sendResponse({state: false, error: 'Unknown request'});
+
 });
 
   </script>
