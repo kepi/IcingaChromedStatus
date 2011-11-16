@@ -84,3 +84,7 @@ body#options label {
 .center {
   text-align: center;
 }
+
+#tab-1.options div {
+    height: 33px;
+}

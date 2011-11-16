@@ -32,7 +32,9 @@ function refreshData(refreshStatus, sendResponse)
   var password = window.localStorage.password;
   var url = window.localStorage.url;
   var url_base = window.localStorage.url_base;
-  
+  var ignoreServicesRegexp = new RegExp (window.localStorage.ignoreServicesRegexp);
+  var ignoreHostsRegexp = new RegExp (window.localStorage.ignoreHostsRegexp);
+
   // setup needs url
   if ( url == '' || url == undefined ) {
     debug_log('Url not defined');
@@ -94,11 +96,15 @@ function refreshData(refreshStatus, sendResponse)
               var href = $(e).find("a").attr('href');
               acked = $(e).find("span[imgurl*='ack.gif']").attr('imgurl');
               ackHost = ( acked == undefined ) ? false : true;
-              h = new Host(host, href);
-              // TODO: pridat kontrolu acku u hosta
-              hosts.addHost(h, statusclass, ackHost);
-            }
+
+              // do not add hosts that we've ignored with regexp
+              if (host.search(ignoreHostsRegexp) == -1) {
+                h = new Host(host, href);
+                // TODO: pridat kontrolu acku u hosta
+                hosts.addHost(h, statusclass, ackHost);
               }
+            }
+          }
           // second col is service
           else if ( i == 1 ) {
                 service = $(e).find("a").text();
@@ -110,9 +116,13 @@ function refreshData(refreshStatus, sendResponse)
           else if ( i == 2 ) {
             var state = $(e).text();
 
-            s = new Service(service, link, state, ackService);
-            hosts.getHost(host).addService(s);
-                //debug_log("Found service: "+service+" with url "+href+" and state "+state);
+            // do not add services that we've ignored with regexp
+            // also do not add those from ignored hosts
+            if (service.search(ignoreServicesRegexp) == -1 && host.search(ignoreHostsRegexp) == -1) {
+              s = new Service(service, link, state, ackService);
+              hosts.getHost(host).addService(s);
+                  //debug_log("Found service: "+service+" with url "+href+" and state "+state);
+            }
           }
           // other columns
           // 3 - last check
