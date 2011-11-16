@@ -23,6 +23,13 @@ function clearBadge()
   chrome.browserAction.setBadgeText({text: ''});
 }
 
+function errorBadge()
+{
+  chrome.browserAction.setBadgeText({text: 'ERR'});
+  color = [255, 51, 0, 255];
+  chrome.browserAction.setBadgeBackgroundColor({color: color});
+}
+
 function stateClass(state, full)
 {
   var classes = full == undefined ? {0: 'ok', 1: 'pend', 2: 'unkn', 4: 'warn', 8: 'cri'} : {0: 'ok', 1: 'pending', 2: 'unknown', 4: 'warning', 8: 'critical'};
