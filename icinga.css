@@ -60,19 +60,6 @@ br.clear { clear: both; }
   text-decoration: none;
 }
 
-/* OPTIONS */
-body#options {
-  max-width: 600px;
-}
-
-body#options label {
-  display: block;
-  float: left;
-  width: 110px;
-  position: relative;
-  top: 3px;
-}
-
 .tools {
   white-space: nowrap;
 }
@@ -85,6 +72,3 @@ body#options label {
   text-align: center;
 }
 
-#tab-1.options div {
-    height: 33px;
-}
