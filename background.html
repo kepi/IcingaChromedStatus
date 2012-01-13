@@ -34,8 +34,9 @@ function refreshData(refreshStatus, sendResponse)
   var url_base = window.localStorage.url_base;
 
   try {
-    var ignoreServicesRegexp = new RegExp (window.localStorage.ignoreServicesRegexp);
-    var ignoreHostsRegexp = new RegExp (window.localStorage.ignoreHostsRegexp);
+    var modifiers = window.localStorage.ignoreCaseSensitivity === "false" ? "" : "i";
+    var ignoreServicesRegexp = new RegExp (window.localStorage.ignoreServicesRegexp, modifiers);
+    var ignoreHostsRegexp = new RegExp (window.localStorage.ignoreHostsRegexp, modifiers);
   } catch (e) {
     error = 'bad-regexp';
     respond({state: false, error: error}, sendResponse);

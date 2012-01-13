@@ -33,6 +33,9 @@
   window.localStorage.ignoreServicesRegexp = document.getElementById("ignoreServicesRegexp").value;
   window.localStorage.ignoreHostsRegexp = document.getElementById("ignoreHostsRegexp").value;
 
+  window.localStorage.ignoreCaseSensitivity =
+    document.getElementById("ignoreCaseSensitivity").checked ? true : false;
+
   // Update status to let user know options were saved.
   var status = document.getElementById("status");
   status.innerHTML = "Options Saved.";
@@ -62,6 +65,9 @@ function restore_options() {
 
   if ( window.localStorage.ignoreHostsRegexp != undefined )
     document.getElementById("ignoreHostsRegexp").value = window.localStorage.ignoreHostsRegexp;
+
+  document.getElementById("ignoreCaseSensitivity").checked =
+    (window.localStorage.ignoreCaseSensitivity === "false") ? false : true;
 }
 
 $(document).ready(function() {
@@ -76,6 +82,7 @@ function update_refresh()
   $('#refrsecs').html(document.getElementById("refresh").value+ " seconds");
 }
 
+console.log(window.localStorage);
 </script>
 <script type="text/javascript">
   /* <![CDATA[ */
@@ -121,6 +128,10 @@ function update_refresh()
       </div>
       <div>
         <label for="ignoreHostsRegexp">Ignore hosts</label> <input type="test" placeholder="" name="ignoreHostsRegexp" id="ignoreHostsRegexp" style="width: 345px;" /> Regexp
+      </div>
+
+      <div>
+        <label for="ignoreCaseSensitivity">Case insensitive regexp's</label> <input type="checkbox" placeholder="" name="ignoreCaseSensitivity" id="ignoreCaseSensitivity" />
       </div>
 
 
