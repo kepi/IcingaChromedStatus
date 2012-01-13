@@ -42,7 +42,7 @@ function Hosts()
   this.totals_hosts = {0: 0, 1: 0, 4: 0, 8: 0};
   this.totals_services = {0: 0, 1: 0, 2: 0, 4: 0, 8: 0};
 
-  this.addHost = function(host, statusclass, ack)
+  this.addHost = function(host, statusclass, ack, downtime)
   {
     // TODO: vyresit dalsi stavy
     if ( statusclass == 'statusOdd' || statusclass == 'statusEven' )
@@ -50,7 +50,7 @@ function Hosts()
     else
       state = HSTATE_DOWN;
 
-    host.setState(state, ack);
+    host.setState(state, ack, downtime);
 
     this.hosts[host.name] = host;
   }
@@ -78,7 +78,7 @@ function Hosts()
       var states = host.getState('states_array');
 
       // find worst host state
-      if ( !host.ack && host.state > this.worst_host  )
+      if ( !host.ack && !host.downtime && host.state > this.worst_host  )
         this.worst_host = host.state;
 
       // find worst service state
@@ -86,7 +86,7 @@ function Hosts()
         this.worst_service = states.WORST;
     
       // sum it
-      hostState = host.ack ? 0 : host.state;
+      hostState = (host.ack || host.downtime) ? 0 : host.state;
       this.totals_hosts[hostState] += 1;
       this.totals_services[STATE_OK] += states[STATE_OK];
       this.totals_services[STATE_PEND] += states[STATE_PEND];
@@ -174,15 +174,17 @@ function Host(name, link)
   this.services = new Array;
   this.state = STATE_OK;
   this.ack = ack;
+  this.downtime = downtime;
   this.service_states = {HOST: 0, WRONG: 0, WORST: 0, 0: 0, 1: 0, 2: 0, 4: 0, 8: 0};
   this.service_states_all = {HOST: 0, WRONG: 0, WORST: 0, 0: 0, 1: 0, 2: 0, 4: 0, 8: 0};
 
-  this.setState = function(state, ack)
+  this.setState = function(state, ack, downtime)
   {
     this.ack = ack;
+    this.downtime = downtime;
     this.state = state;
 
-    this.service_states.HOST = this.ack ? 0 : state;
+    this.service_states.HOST = (this.ack || this.downtime) ? 0 : state;
 
     this.service_states_all.HOST = state;
   }
@@ -216,7 +218,7 @@ function Host(name, link)
       if ( this.services[s].state > this.service_states_all.WORST )
         this.service_states_all.WORST = this.services[s].state;
       
-      if ( !this.services[s].ack ) {
+      if ( !this.services[s].ack && !this.services[s].downtime ) {
         // count this state
         ++this.service_states[this.services[s].state];
         // count all wrong states
@@ -254,11 +256,11 @@ function Host(name, link)
     var states = this.getState('states_array');
     var states_all = this.getState('states_array_all');
     
-    return {name: this.name, link: this.link, services: services, ack: this.ack, state: this.state, states: states, states_all: states_all};
+    return {name: this.name, link: this.link, services: services, ack: this.ack, downtime: this.downtime, state: this.state, states: states, states_all: states_all};
   }
 }
 
-function Service(name, link, state, ack) 
+function Service(name, link, state, ack, downtime) 
 {
 
   if ( state == 'OK' )
@@ -275,9 +277,10 @@ function Service(name, link, state, ack)
   this.name = name;
   this.link = link;
   this.ack = ack;
+  this.downtime = downtime;
 
   this.toJSON = function(options)
   {
-    return {name: this.name, link: this.link, state: this.state.toString(), ack: this.ack};
+    return {name: this.name, link: this.link, state: this.state.toString(), ack: this.ack, downtime: this.downtime};
   }
 }

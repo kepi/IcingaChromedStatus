@@ -12,7 +12,7 @@
   <link href="inc/jquery-ui/css/smoothness/jquery-ui-1.8.4.custom.css" rel="stylesheet" type="text/css"/>
   <script src="inc/jquery-ui/js/jquery-ui-1.8.4.custom.min.js"></script>
 
-  <link href="icinga.css?7" rel="stylesheet" type="text/css"/>
+  <link href="icinga.css?0.0.9" rel="stylesheet" type="text/css"/>
   <script src="icinga.js"></script>
 
 <script>
@@ -104,8 +104,9 @@ function show()
       var host = response.hosts[h];
       var reschedule='<a title="Reschedule check of this host" class="ui-icon ui-icon-refresh" href="#" onclick="sendCommand(\'reschedule\', \''+host.name+'\')">resch</a>';
       var ack='<a title="Acknowledge this problem" class="ui-icon ui-icon-wrench" href="#" onclick="sendCommand(\'ack\', \''+host.name+'\')">ack</a>';
+      var hDowntime = host.downtime ? ' downtime' : '';
 
-      var line = '<tr class="host"><td colspan="2" class="normal"><a href="#" onclick="goto(\''+window.localStorage.url_icinga+'/'+host.link+'\')">'+host.name+'</a>'+(host.ack?'&nbsp;<span class="ui-icon ui-icon-check" style="float: right;" title="Acknowledged">&nbsp;</span>':'')+'</td><td class="state '+stateClass(host.state)+'">'+stateClass(host.state, true)+'</td><td class="tools">'+reschedule+(host.ack || host.state == 0 ? '' : ack)+'</td></tr>';
+      var line = '<tr class="host"><td colspan="2" class="normal'+hDowntime+'"><a href="#" onclick="goto(\''+window.localStorage.url_icinga+'/'+host.link+'\')">'+host.name+'</a>'+(host.ack?'&nbsp;<span class="ui-icon ui-icon-check" style="float: right;" title="Acknowledged">&nbsp;</span>':'')+'</td><td class="state '+stateClass(host.state)+'">'+stateClass(host.state, true)+'</td><td class="tools">'+reschedule+(host.ack || host.downtime || host.state == 0 ? '' : ack)+'</td></tr>';
 
       // add to overview only if not ok
       if ( host.states_all['HOST'] > 0 || host.states_all['WRONG'] > 0 )
@@ -117,10 +118,11 @@ function show()
       // browse all services of host
       for (var s in host.services ) {
         var service = host.services[s];
+        var sDowntime = service.downtime ? ' downtime' : '';
         var reschedule='<a title="Reschedule check of this service" class="ui-icon ui-icon-refresh" href="#" onclick="sendCommand(\'reschedule\', \''+host.name+'\',\''+service.name+'\')">resch</a>';
         var ack='<a title="Acknowledge this problem" class="ui-icon ui-icon-wrench" href="#" onclick="sendCommand(\'ack\', \''+host.name+'\',\''+service.name+'\')">ack</a>';
 
-        var line = '<tr class="service"><td style="width: 30px;">&nbsp;</td><td class="normal" style="white-space: nowrap;"><a href="#" onclick="goto(\''+window.localStorage.url_icinga+'/'+service.link+'\')">'+service.name+'</a>'+(service.ack?'&nbsp;<span class="ui-icon ui-icon-check" style="float: right;" title="Acknowledged">&nbsp;</span>':'')+'</td><td class="state '+stateClass(service.state)+'">'+stateClass(service.state, true)+'</td><td class="tools">'+reschedule+(service.ack || service.state == 0 ? '' : ack)+'</td></tr>';
+        var line = '<tr class="service"><td style="width: 30px;">&nbsp;</td><td class="normal'+sDowntime+'" style="white-space: nowrap;"><a href="#" onclick="goto(\''+window.localStorage.url_icinga+'/'+service.link+'\')">'+service.name+'</a>'+(service.ack?'&nbsp;<span class="ui-icon ui-icon-check" style="float: right;" title="Acknowledged">&nbsp;</span>':'')+'</td><td class="state '+stateClass(service.state)+'">'+stateClass(service.state, true)+'</td><td class="tools">'+reschedule+(service.ack || service.downtime || service.state == 0 ? '' : ack)+'</td></tr>';
 
 
         // add to overview only if not ok

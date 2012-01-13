@@ -103,3 +103,10 @@ a.uglyfirstahack {
   left: -1000px;
   right: -1000px;
 }
+
+.downtime {
+  background-image: url('img/downtime.png');
+  background-repeat: no-repeat;
+  background-position: right;
+  padding-right: 24px;
+}

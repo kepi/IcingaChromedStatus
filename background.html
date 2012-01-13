@@ -89,10 +89,13 @@ function refreshData(refreshStatus, sendResponse)
       var link = '';
       var ackService = false;
       var ackHost = false;
+      var downtimeService = false;
+      var downtimeHost = false;
     
       // browse rows
       obj.find("> tr").each( function(index, el) {
         ack = false;
+        downtime = false;
             // browse cols
         $(el).find("> td").each( function(i, e) {
           // first col, we solve host
@@ -105,12 +108,14 @@ function refreshData(refreshStatus, sendResponse)
               var href = $(e).find("a").attr('href');
               acked = $(e).find("span[imgurl*='ack.gif']").attr('imgurl');
               ackHost = ( acked == undefined ) ? false : true;
+              downtimeed = $(e).find("span[imgurl*='downtime.gif']").attr('imgurl');
+              downtimeHost = ( downtimeed == undefined ) ? false : true;
 
               // do not add hosts that we've ignored with regexp
               if (ignoreHostsRegexp.source == '' || host.search(ignoreHostsRegexp) == -1) {
                 h = new Host(host, href);
                 // TODO: pridat kontrolu acku u hosta
-                hosts.addHost(h, statusclass, ackHost);
+                hosts.addHost(h, statusclass, ackHost, downtimeHost);
               }
             }
           }
@@ -120,6 +125,8 @@ function refreshData(refreshStatus, sendResponse)
                 link = $(e).find("a").attr('href');
                 acked = $(e).find("span[imgurl*='ack.gif']").attr('imgurl');
                 ackService = ( acked == undefined ) ? false : true;
+                downtimeed = $(e).find("span[imgurl*='downtime.gif']").attr('imgurl');
+                downtimeService = ( downtimeed == undefined ) ? false : true;
           }
           // service status
           else if ( i == 2 ) {
@@ -129,7 +136,7 @@ function refreshData(refreshStatus, sendResponse)
             // also do not add those from ignored hosts
             if ((ignoreServicesRegexp.source == '' || service.search(ignoreServicesRegexp) == -1)
                     && (ignoreHostsRegexp.source == '' ||  host.search(ignoreHostsRegexp) == -1)) {
-              s = new Service(service, link, state, ackService);
+              s = new Service(service, link, state, ackService, downtimeService);
               hosts.getHost(host).addService(s);
                   //debug_log("Found service: "+service+" with url "+href+" and state "+state);
             }
