@@ -29,6 +29,9 @@
 
   window.localStorage.refresh = document.getElementById("refresh").value;
 
+  window.localStorage.ignoreServicesRegexp = document.getElementById("ignoreServicesRegexp").value;
+  window.localStorage.ignoreHostsRegexp = document.getElementById("ignoreHostsRegexp").value;
+
   // Update status to let user know options were saved.
   var status = document.getElementById("status");
   status.innerHTML = "Options Saved.";
@@ -52,6 +55,12 @@ function restore_options() {
     document.getElementById("refresh").value = window.localStorage.refresh;
   else
     document.getElementById("refresh").value = 30;
+
+  if ( window.localStorage.ignoreServicesRegexp != undefined )
+    document.getElementById("ignoreServicesRegexp").value = window.localStorage.ignoreServicesRegexp;
+
+  if ( window.localStorage.ignoreHostsRegexp != undefined )
+    document.getElementById("ignoreHostsRegexp").value = window.localStorage.ignoreHostsRegexp;
 }
 
 $(document).ready(function() {
@@ -77,18 +86,24 @@ function update_refresh()
     <li><a href="#tab-1"><span>Main</span></a></li>
   </ul>
 
-  <div id="tab-1">
-    <div>
-    <label for="username">Username</label> <input type="test" name="username" id="username" placeholder="Your Icinga Username" />
+  <div id="tab-1" class="options">
+    <div style="height: 30px;">
+      <label for="username">Username</label> <input type="test" name="username" id="username" placeholder="Your Icinga Username" />
     </div>
     <div>
-    <label for="password">Password</label> <input type="password" name="password" id="password" /> Leave empty if you don't wish to change password
+      <label for="password">Password</label> <input type="password" name="password" id="password" /> Leave empty if you don't wish to change password
     </div>
     <div>
-    <label for="url">URL to status.cgi</label> <input type="test" placeholder="i.e. https://monitoring.domain.com/icinga/cgi-bin/status.cgi" name="url" id="url" style="width: 400px;" />
+      <label for="url">URL to status.cgi</label> <input type="test" placeholder="i.e. https://monitoring.domain.com/icinga/cgi-bin/status.cgi" name="url" id="url" style="width: 400px;" />
     </div>
     <div>
       <label for="refresh">Refresh</label> <input type="range" min="5" max="600" name="refresh" id="refresh" style="width: 300px;" onchange="javascript:update_refresh()" /> <span id="refrsecs" />
+    </div>
+    <div>
+      <label for="ignoreServicesRegexp">Ignore services</label> <input type="test" placeholder="" name="ignoreServicesRegexp" id="ignoreServicesRegexp" style="width: 345px;" /> Regexp
+    </div>
+    <div>
+      <label for="ignoreHostsRegexp">Ignore hosts</label> <input type="test" placeholder="" name="ignoreHostsRegexp" id="ignoreHostsRegexp" style="width: 345px;" /> Regexp
     </div>
 
     <br />

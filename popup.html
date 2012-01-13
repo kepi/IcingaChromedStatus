@@ -80,6 +80,8 @@ function show()
         msg = 'You need to <a href="#" onclick="javascript:goto(\'options.html\')">setup this extension</a> first.';
       else if ( response.error == 'bad-url' )
         msg = 'URL to status.cgi doesn\'t exists on server, please <a href="#" onclick="javascript:goto(\'options.html\')">setup correct URL</a> first.';
+      else if ( response.error == 'bad-regexp' )
+        msg = 'It appears that you have a syntax error in your regular expression, please <a href="#" onclick="javascript:goto(\'options.html\')">go to options</a> to correct it.';
       else if ( response.error = 'unknown' )
         msg = 'Unknown error. Please provide more details about your config to github issue page so I can help you.';
       else
