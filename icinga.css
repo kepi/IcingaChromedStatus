@@ -1,7 +1,8 @@
 body {
   font-family: Arial,Verdana,sans-serif;
   font-size: 10px;
-
+  padding: 0px;
+  margin: 0px;
 }
 
 #totalsHosts { 
@@ -48,18 +49,6 @@ td a:hover { text-decoration: underline; }
 
 br.clear { clear: both; }
 
-#control {
-  font-size: 1.1em;
-  text-align: right;
-  margin-bottom: 3px;
-}
-
-#control a {
-  color: #6d6a5f;
-  color: black;
-  text-decoration: none;
-}
-
 .tools {
   white-space: nowrap;
 }
@@ -72,3 +61,45 @@ br.clear { clear: both; }
   text-align: center;
 }
 
+.ui-tabs {
+  border: 0px !important;
+}
+
+a#refresh-data {
+  position: absolute;
+  top: 9px;
+  right: 20px;
+  z-index: 1000;
+  width: 16px;
+  height: 17px;
+  background: url("img/reload.png") no-repeat;
+}
+
+#footer {
+  font-family: Arial, Verdana, sans-serif;
+  text-align: right;  
+  margin-top: 5px;
+  padding: 10px;
+  padding-top: 15px;
+  background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#fdfdfd), to(#e6f2cb));
+}
+
+#footer span#flattrbutton {
+  float: left;
+}
+
+#footer a {
+  color: black;
+}
+
+#footer a:hover {
+  color: navy;
+}
+
+/* ugly hack.. I'm receiving orange border arround fist <a> with href and I don't know
+ * why. So this is temp solution */
+a.uglyfirstahack {
+  position: absolute;
+  left: -1000px;
+  right: -1000px;
+}

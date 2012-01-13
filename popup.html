@@ -12,7 +12,7 @@
   <link href="inc/jquery-ui/css/smoothness/jquery-ui-1.8.4.custom.css" rel="stylesheet" type="text/css"/>
   <script src="inc/jquery-ui/js/jquery-ui-1.8.4.custom.min.js"></script>
 
-  <link href="icinga.css" rel="stylesheet" type="text/css"/>
+  <link href="icinga.css?7" rel="stylesheet" type="text/css"/>
   <script src="icinga.js"></script>
 
 <script>
@@ -186,10 +186,8 @@ $(document).ready(function() {
 
 </head>
 <body>
-<div id="control">
-  <a href="#" onclick="javascript:refresh()">Refresh Data</a> | 
-  <a class="ext" href="options.html">Options</a>
-</div>
+<a class="uglyfirstahack" href="#">&nbsp;</a>
+<a title="Refresh data" id="refresh-data" href="#" onclick="javascript:refresh()" border="0"></a>
 
 <div id="tabs">
   <ul>
@@ -224,9 +222,9 @@ $(document).ready(function() {
 </div>
 
 <div id="footer">
-<br />
+  <span id="flattrbutton"><a class="FlattrButton" style="display:none;" rev="flattr;button:compact;" href="https://chrome.google.com/webstore/detail/imaieifkljkcdepgaeommbdgihollphm"></a><noscript><a href="http://flattr.com/thing/381395/Icinga-Chromed-Status" target="_blank"><img src="http://api.flattr.com/button/flattr-badge-large.png" alt="Flattr this" title="Flattr this" border="0" /></a></noscript></span>
 
-<span id="flattrbutton"><a class="FlattrButton" style="display:none;" rev="flattr;button:compact;" href="https://chrome.google.com/webstore/detail/imaieifkljkcdepgaeommbdgihollphm"></a><noscript><a href="http://flattr.com/thing/381395/Icinga-Chromed-Status" target="_blank"><img src="http://api.flattr.com/button/flattr-badge-large.png" alt="Flattr this" title="Flattr this" border="0" /></a></noscript></span>
+  <a class="ext" href="options.html">Options</a>
 </div>
 
 </body>
