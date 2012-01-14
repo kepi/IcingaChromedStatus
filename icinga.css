@@ -114,3 +114,11 @@ a.uglyfirstahack {
 #searchHosts, #searchServices {
   width: 300px;
 }
+
+#all-ok {
+  background: url('img/ok.png') no-repeat;
+  padding-left: 40px;
+  font-weight: bold;
+  line-height: 26px;
+  margin-top: 20px;
+}

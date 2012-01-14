@@ -133,7 +133,11 @@ function show()
       }
     }
 
-    oo = '<br /><h3>Problems on hosts and services</h3><table id="tableOverview">'+oo+'</table>';
+    if ( oo == '' ) {
+      oo = '<p id="all-ok">Everything is OK. Just take your coffee and relax.</p>';
+    } else {
+      oo = '<br /><h3>Problems on hosts and services</h3><table id="tableOverview">'+oo+'</table>';
+    }
 
     var ot = '<div id="totalsHosts"><h3>Host Status</h3><table>'+
        '<tr><th>Up</th><th>Down</th><th>Unr</th><th>Pend</th></tr>'+
