@@ -110,3 +110,7 @@ a.uglyfirstahack {
   background-position: right;
   padding-right: 24px;
 }
+
+#searchHosts, #searchServices {
+  width: 300px;
+}

@@ -106,7 +106,7 @@ function show()
       var ack='<a title="Acknowledge this problem" class="ui-icon ui-icon-wrench" href="#" onclick="sendCommand(\'ack\', \''+host.name+'\')">ack</a>';
       var hDowntime = host.downtime ? ' downtime' : '';
 
-      var line = '<tr class="host"><td colspan="2" class="normal'+hDowntime+'"><a href="#" onclick="goto(\''+window.localStorage.url_icinga+'/'+host.link+'\')">'+host.name+'</a>'+(host.ack?'&nbsp;<span class="ui-icon ui-icon-check" style="float: right;" title="Acknowledged">&nbsp;</span>':'')+'</td><td class="state '+stateClass(host.state)+'">'+stateClass(host.state, true)+'</td><td class="tools">'+reschedule+(host.ack || host.downtime || host.state == 0 ? '' : ack)+'</td></tr>';
+      var line = '<tr class="host" data-hostname="'+host.name+'"><td colspan="2" class="normal'+hDowntime+'"><a href="#" onclick="goto(\''+window.localStorage.url_icinga+'/'+host.link+'\')">'+host.name+'</a>'+(host.ack?'&nbsp;<span class="ui-icon ui-icon-check" style="float: right;" title="Acknowledged">&nbsp;</span>':'')+'</td><td class="state '+stateClass(host.state)+'">'+stateClass(host.state, true)+'</td><td class="tools">'+reschedule+(host.ack || host.downtime || host.state == 0 ? '' : ack)+'</td></tr>';
 
       // add to overview only if not ok
       if ( host.states_all['HOST'] > 0 || host.states_all['WRONG'] > 0 )
@@ -122,7 +122,7 @@ function show()
         var reschedule='<a title="Reschedule check of this service" class="ui-icon ui-icon-refresh" href="#" onclick="sendCommand(\'reschedule\', \''+host.name+'\',\''+service.name+'\')">resch</a>';
         var ack='<a title="Acknowledge this problem" class="ui-icon ui-icon-wrench" href="#" onclick="sendCommand(\'ack\', \''+host.name+'\',\''+service.name+'\')">ack</a>';
 
-        var line = '<tr class="service"><td style="width: 30px;">&nbsp;</td><td class="normal'+sDowntime+'" style="white-space: nowrap;"><a href="#" onclick="goto(\''+window.localStorage.url_icinga+'/'+service.link+'\')">'+service.name+'</a>'+(service.ack?'&nbsp;<span class="ui-icon ui-icon-check" style="float: right;" title="Acknowledged">&nbsp;</span>':'')+'</td><td class="state '+stateClass(service.state)+'">'+stateClass(service.state, true)+'</td><td class="tools">'+reschedule+(service.ack || service.downtime || service.state == 0 ? '' : ack)+'</td></tr>';
+        var line = '<tr class="service" data-hostname="'+host.name+'" data-servicename="'+service.name+'"><td style="width: 30px;">&nbsp;</td><td class="normal'+sDowntime+'" style="white-space: nowrap;"><a href="#" onclick="goto(\''+window.localStorage.url_icinga+'/'+service.link+'\')">'+service.name+'</a>'+(service.ack?'&nbsp;<span class="ui-icon ui-icon-check" style="float: right;" title="Acknowledged">&nbsp;</span>':'')+'</td><td class="state '+stateClass(service.state)+'">'+stateClass(service.state, true)+'</td><td class="tools">'+reschedule+(service.ack || service.downtime || service.state == 0 ? '' : ack)+'</td></tr>';
 
 
         // add to overview only if not ok
@@ -156,9 +156,45 @@ function show()
 
 
     $("#output").html(ot+oo)
-    $("#outputHosts").html('<table id="tableHosts">'+oh+'</table>');
-    $("#outputServices").html('<table id="tableServices">'+os+'</table>');
+    $("#outputHosts").html('<input type="text" id="searchHosts" onkeyup="filter(this, \'tableHosts\')" placeholder="enter part i.e. part of hostname" /><table id="tableHosts">'+oh+'</table>');
+    $("#outputServices").html('<input type="text" id="searchServices" onkeyup="filter(this, \'tableServices\')" placeholder="enter part i.e. part of service name or hostname" /><table id="tableServices">'+os+'</table>');
   });
+}
+
+/* filter host and service table */
+function filter(search, table)
+{
+  var reg = new RegExp(search.value, "i");
+
+  var enabledHosts = new Array();
+
+  $('#'+table+" tr").each(function() {
+    var row = $(this);
+
+    /* normal hostname */
+    if ( reg.test(row.attr('data-hostname')) ) {
+      $(this).css('display','table-row')
+    /* services */
+    } else if ( table == 'tableServices' && reg.test(row.attr('data-servicename') ) )  {
+      enabledHosts[row.attr('data-hostname')] = 1;
+      console.log(row.attr('data-hostname'))
+      console.log(enabledHosts)
+      $(this).css('display','table-row')
+    /* none */
+    } else {
+      $(this).css('display','none')
+    }
+  });
+
+  /* we have to reenable hosts for services that are shown */
+  if ( table == 'tableServices' && Object.keys(enabledHosts).length > 0 ) {
+    $('#'+table+" tr").each(function() {
+      var row = $(this);
+      if ( enabledHosts[row.attr('data-hostname')] === 1 && row.attr('class') == 'host' ) {
+        $(this).css('display','table-row');
+      }
+    });
+  }
 }
 
 // document is ready, we can start
