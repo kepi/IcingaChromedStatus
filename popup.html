@@ -3,18 +3,12 @@
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
 
-  <style type="text/css">
-  body { min-width: 400px; }
-  </style>
-
   <script src="inc/jquery-1.4.2.min.js"></script>
-
   <link href="inc/jquery-ui/css/smoothness/jquery-ui-1.8.4.custom.css" rel="stylesheet" type="text/css"/>
   <script src="inc/jquery-ui/js/jquery-ui-1.8.4.custom.min.js"></script>
 
   <link href="icinga.css?0.0.9" rel="stylesheet" type="text/css"/>
   <script src="icinga.js"></script>
-
 <script>
 function goto(url) {
   chrome.tabs.create({url: url});
@@ -227,7 +221,7 @@ $(document).ready(function() {
 </script>
 
 </head>
-<body>
+<body id="popup">
 <a class="uglyfirstahack" href="#">&nbsp;</a>
 <a title="Refresh data" id="refresh-data" href="#" onclick="javascript:refresh()" border="0"></a>
 
