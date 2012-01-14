@@ -1,7 +1,7 @@
 {
-  "name": "Icinga Chromed Status",
+  "name": "Icinga Status",
   "version": "0.0.9",
-  "description": "Icinga Status monitor for Google Chrome and Chromium.",
+  "description": "Icinga Status is simple open source extension for Google Chrome™ that helps you watch over your Icinga or Nagios instance.",
 
   "background_page": "background.html",
   "options_page": "options.html",
@@ -13,7 +13,7 @@
 
   "browser_action": {
     "default_icon": "icon.png",
-    "default_title": "Icinga Chromed Status",
+    "default_title": "Icinga Status",
     "popup": "popup.html"
   },
 
