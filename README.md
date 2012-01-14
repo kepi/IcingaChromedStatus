@@ -3,7 +3,7 @@ Icinga Status for Google Chrome™
 
 Icinga Status is simple open source extension for Google Chrome™ that helps you watch over your Icinga or Nagios instance.
 
-[![Flattr this git repo](http://api.flattr.com/button/flattr-badge-large.png)](https://flattr.com/thing/381395/Icinga-Chromed-Status)
+[![Flattr this git repo](http://api.flattr.com/button/flattr-badge-large.png)](https://flattr.com/thing/381395)
 
 Features
 --------
