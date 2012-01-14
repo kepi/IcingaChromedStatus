@@ -99,9 +99,9 @@ a#refresh-data {
 /* ugly hack.. I'm receiving orange border arround fist <a> with href and I don't know
  * why. So this is temp solution */
 a.uglyfirstahack {
+  width: 1px; height: 1px;
   position: absolute;
-  left: -1000px;
-  right: -1000px;
+  top: -20px;
 }
 
 .downtime {
