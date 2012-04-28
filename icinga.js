@@ -9,7 +9,7 @@ const HSTATE_UP   = 0;
 const HSTATE_PEND = 1;
 const HSTATE_UNR  = 4;
 const HSTATE_DOWN = 8;
-  
+
 var debug = false;
 
 function debug_log(msg)
@@ -84,7 +84,7 @@ function Hosts()
       // find worst service state
       if ( states.WORST > this.worst_service )
         this.worst_service = states.WORST;
-    
+
       // sum it
       hostState = (host.ack || host.downtime) ? 0 : host.state;
       this.totals_hosts[hostState] += 1;
@@ -104,7 +104,7 @@ function Hosts()
       // find worst_all service state
       if ( states_all.WORST > this.worst_all_service )
         this.worst_all_service = states_all.WORST;
-    
+
       // sum it
       this.totals_all_hosts[host.state] += 1;
       this.totals_all_services[STATE_OK] += states_all[STATE_OK];
@@ -167,7 +167,7 @@ function Hosts()
   }
 }
 
-function Host(name, link) 
+function Host(name, link)
 {
   this.name = name;
   this.link = link;
@@ -185,11 +185,10 @@ function Host(name, link)
     this.state = state;
 
     this.service_states.HOST = (this.ack || this.downtime) ? 0 : state;
-
     this.service_states_all.HOST = state;
   }
 
-  this.addService = function(service) 
+  this.addService = function(service)
   {
     this.services[service.name] = service;
   }
@@ -214,10 +213,11 @@ function Host(name, link)
       // count all wrong states_all
       if ( this.services[s].state > STATE_OK )
         ++this.service_states_all.WRONG;
+
       // set worst state
       if ( this.services[s].state > this.service_states_all.WORST )
         this.service_states_all.WORST = this.services[s].state;
-      
+
       if ( !this.services[s].ack && !this.services[s].downtime ) {
         // count this state
         ++this.service_states[this.services[s].state];
@@ -255,7 +255,7 @@ function Host(name, link)
 
     var states = this.getState('states_array');
     var states_all = this.getState('states_array_all');
-    
+
     return {name: this.name, link: this.link, services: services, ack: this.ack, downtime: this.downtime, state: this.state, states: states, states_all: states_all};
   }
 }
