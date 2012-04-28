@@ -93,6 +93,8 @@ function show()
     var oh = '';
     var os = '';
 
+    var hideAcked = window.localStorage.hideAcked === "true" ? true : false;
+
     // browse all hosts
     for (var h in response.hosts) {
       var host = response.hosts[h];
@@ -103,7 +105,9 @@ function show()
       var line = '<tr class="host" data-hostname="'+host.name+'"><td colspan="2" class="normal'+hDowntime+'"><a href="#" onclick="goto(\''+window.localStorage.url_icinga+'/'+host.link+'\')">'+host.name+'</a>'+(host.ack?'&nbsp;<span class="ui-icon ui-icon-check" style="float: right;" title="Acknowledged">&nbsp;</span>':'')+'</td><td class="state '+stateClass(host.state)+'">'+stateClass(host.state, true)+'</td><td class="tools">'+reschedule+(host.ack || host.downtime || host.state == 0 ? '' : ack)+'</td></tr>';
 
       // add to overview only if not ok
-      if ( host.states_all['HOST'] > 0 || host.states_all['WRONG'] > 0 )
+      var _states = hideAcked ? host.states : host.states_all;
+
+      if ( _states['HOST'] > 0 || _states['WRONG'] > 0 )
         oo += line;
 
       oh += line;
@@ -120,7 +124,7 @@ function show()
 
 
         // add to overview only if not ok
-        if ( service.state > 0 )
+        if ( service.state > 0 && ( !hideAcked || ( hideAcked && !service.ack ) ) )
           oo += line;
 
         os += line;

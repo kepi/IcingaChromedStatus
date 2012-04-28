@@ -36,6 +36,9 @@
   window.localStorage.ignoreCaseSensitivity =
     document.getElementById("ignoreCaseSensitivity").checked ? true : false;
 
+  window.localStorage.hideAcked =
+    document.getElementById("hideAcked").checked ? true : false;
+
   // Update status to let user know options were saved.
   var status = document.getElementById("status");
   status.innerHTML = "Options Saved.";
@@ -68,6 +71,9 @@ function restore_options() {
 
   document.getElementById("ignoreCaseSensitivity").checked =
     (window.localStorage.ignoreCaseSensitivity === "false") ? false : true;
+
+  document.getElementById("hideAcked").checked =
+    (window.localStorage.hideAcked === "true") ? true : false;
 }
 
 $(document).ready(function() {
@@ -120,8 +126,11 @@ console.log(window.localStorage);
       <div>
         <label for="refresh">Refresh</label> <input type="range" min="5" max="600" name="refresh" id="refresh" style="width: 300px;" onchange="javascript:update_refresh()" /> <span id="refrsecs">&nbsp;</span>
       </div>
+      <div>
+        <label for="hideAcked">Hide acknowledged</label> <input type="checkbox" placeholder="" name="hideAcked" id="hideAcked" />
+      </div>
     </div> <!-- end of first tab -->
-      
+
     <div id="tab-2" class="options">
       <div>
         <label for="ignoreServicesRegexp">Ignore services</label> <input type="test" placeholder="i.e. (imap|ssh)" name="ignoreServicesRegexp" id="ignoreServicesRegexp" style="width: 345px;" /> <cite>regexp</cite>
