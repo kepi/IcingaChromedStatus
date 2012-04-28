@@ -206,6 +206,9 @@ function Host(name, link)
     this.service_states = {HOST: 0, WRONG: 0, WORST: 0, 0: 0, 1: 0, 2: 0, 4: 0, 8: 0};
     this.service_states_all = {HOST: 0, WRONG: 0, WORST: 0, 0: 0, 1: 0, 2: 0, 4: 0, 8: 0};
 
+    this.service_states.HOST = (this.ack || this.downtime) ? 0 : this.state;
+    this.service_states_all.HOST = this.state;
+
     // we have to check for state
     for (var s in this.services) {
       // count this state
