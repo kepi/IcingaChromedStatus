@@ -1,7 +1,13 @@
 Changelog
 =========
 
-1.0.0 - 14. 1. 2012
+0.1.1 - 28. 4. 2012
+-------------------
+  * New option: Hide acknowledged hosts and services in popup
+  * Fixed problem when sometimes bad hosts were not displayed
+  * Fixed wrong link to rate this extension
+
+0.1.0 - 14. 1. 2012
 -------------------
   * Added handling of downtimes
   * New future to ignore hosts/services with regular expressions (thanks to slawekp)
@@ -31,7 +37,7 @@ Changelog
 -------------------
   * set refresh value in options
   * fix js error when using with icinga 1.0.3
- 
+
 0.0.4 - 23. 7. 2010
 -------------------
   * support for rescheduling directly from popu
