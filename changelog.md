@@ -1,6 +1,10 @@
 Changelog
 =========
 
+0.1.2 - 11. 7. 2012
+-------------------
+  * Fix wrong handling of empty regexps which probably caused non-working extension. See #13
+
 0.1.1 - 28. 4. 2012
 -------------------
   * New option: Hide acknowledged hosts and services in popup
