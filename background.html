@@ -35,8 +35,14 @@ function refreshData(refreshStatus, sendResponse)
 
   try {
     var modifiers = window.localStorage.ignoreCaseSensitivity === "false" ? "" : "i";
-    var ignoreServicesRegexp = new RegExp (window.localStorage.ignoreServicesRegexp, modifiers);
-    var ignoreHostsRegexp = new RegExp (window.localStorage.ignoreHostsRegexp, modifiers);
+    var ignoreServicesRegexp = false;
+    if ( typeof(window.localStorage.ignoreServicesRegexp) != 'undefined' && window.localStorage.ignoreServicesRegexp != "" ) {
+      ignoreServicesRegexp = new RegExp (window.localStorage.ignoreServicesRegexp, modifiers);
+    }
+    var ignoreHostsRegexp = false;
+    if ( typeof(window.localStorage.ignoreHostsRegexp) != 'undefined' && window.localStorage.ignoreHostsRegexp != "" ) {
+      ignoreHostsRegexp = new RegExp (window.localStorage.ignoreHostsRegexp, modifiers);
+    }
   } catch (e) {
     error = 'bad-regexp';
     respond({state: false, error: error}, sendResponse);
@@ -112,7 +118,7 @@ function refreshData(refreshStatus, sendResponse)
               downtimeHost = ( downtimeed == undefined ) ? false : true;
 
               // do not add hosts that we've ignored with regexp
-              if (ignoreHostsRegexp.source == '' || host.search(ignoreHostsRegexp) == -1) {
+              if (typeof(ignoreHostsRegexp) != 'object' || host.search(ignoreHostsRegexp) == -1) {
                 h = new Host(host, href);
                 // TODO: pridat kontrolu acku u hosta
                 hosts.addHost(h, statusclass, ackHost, downtimeHost);
@@ -134,8 +140,8 @@ function refreshData(refreshStatus, sendResponse)
 
             // do not add services that we've ignored with regexp
             // also do not add those from ignored hosts
-            if ((ignoreServicesRegexp.source == '' || service.search(ignoreServicesRegexp) == -1)
-                    && (ignoreHostsRegexp.source == '' ||  host.search(ignoreHostsRegexp) == -1)) {
+            if ((typeof(ignoreServicesRegexp) != 'object' || service.search(ignoreServicesRegexp) == -1)
+                    && (typeof(ignoreHostsRegexp) != 'object' ||  host.search(ignoreHostsRegexp) == -1)) {
               s = new Service(service, link, state, ackService, downtimeService);
               hosts.getHost(host).addService(s);
                   //debug_log("Found service: "+service+" with url "+href+" and state "+state);
