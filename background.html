@@ -64,7 +64,7 @@ function refreshData(refreshStatus, sendResponse)
   hosts = new Hosts();
   
   // url is ok, add host=all for now
-  url = url+'?host=all';
+  url = url+'?host=all&limit=0';
 
   // try to get data from icinga
   $.ajax({global: false, url: url, password: password, username: username, complete: function(res, status) {
