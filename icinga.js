@@ -10,7 +10,7 @@ const HSTATE_PEND = 1;
 const HSTATE_UNR  = 4;
 const HSTATE_DOWN = 8;
 
-var debug = false;
+var debug = true;
 
 function debug_log(msg)
 {

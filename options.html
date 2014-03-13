@@ -3,104 +3,13 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
   <title>Icinga Status - Options</title>
 
-  <script src="inc/jquery-1.4.2.min.js"></script>
-  <script src="inc/jquery-ui/js/jquery-ui-1.8.4.custom.min.js"></script>
+  <script src="inc/jquery-2.1.0.min.js"></script>
+  <script src="inc/jquery-ui/js/jquery-ui-1.10.4.custom.min.js"></script>
 
-  <link href="inc/jquery-ui/css/smoothness/jquery-ui-1.8.4.custom.css" rel="stylesheet" type="text/css"/>
+  <link href="inc/jquery-ui/css/smoothness/jquery-ui-1.10.4.custom.css" rel="stylesheet" type="text/css"/>
   <link href="icinga.css?0.1.0" rel="stylesheet" type="text/css"/>
   <link href="inc/options/options.css?0.1.0" rel="stylesheet" type="text/css"/>
-
-<script type="text/javascript">
-  // Saves options to localStorage.
-  // TODO: don't allow to save twice at same time because of setting interval in background
-  function save_options() {
-  if (!window.localStorage) {
-          alert("Error local storage is unavailable.");
-          window.close();
-  }
-
-  window.localStorage.username = document.getElementById("username").value;
-  if ( document.getElementById("password").value != '' )
-    window.localStorage.password = document.getElementById("password").value;
-
-  window.localStorage.url = document.getElementById("url").value;
-
-  window.localStorage.url_base = window.localStorage.url.replace(/^(https?:\/\/[^\/]+)\/.*$/i, '$1');
-  window.localStorage.url_icinga = window.localStorage.url.replace(/^(.*)\/[^\/]+.cgi$/i, '$1');
-
-  window.localStorage.refresh = document.getElementById("refresh").value;
-
-  window.localStorage.ignoreServicesRegexp = document.getElementById("ignoreServicesRegexp").value;
-  window.localStorage.ignoreHostsRegexp = document.getElementById("ignoreHostsRegexp").value;
-
-  window.localStorage.ignoreCaseSensitivity =
-    document.getElementById("ignoreCaseSensitivity").checked ? true : false;
-
-  window.localStorage.hideAcked =
-    document.getElementById("hideAcked").checked ? true : false;
-
-  // Update status to let user know options were saved.
-  var status = document.getElementById("status");
-  status.innerHTML = "Options Saved.";
-  setTimeout(function() {
-    status.innerHTML = "";
-  }, 750);
-
-  // refresh data
-  chrome.extension.sendRequest({reqtype: "refresh-data"});
-}
-
-// Restores select box state to saved value from localStorage.
-function restore_options() {
-  if ( window.localStorage.username != undefined )
-    document.getElementById("username").value = window.localStorage.username;
-
-  if ( window.localStorage.url != undefined )
-    document.getElementById("url").value = window.localStorage.url;
-
-  if ( window.localStorage.refresh != undefined )
-    document.getElementById("refresh").value = window.localStorage.refresh;
-  else
-    document.getElementById("refresh").value = 30;
-
-  if ( window.localStorage.ignoreServicesRegexp != undefined )
-    document.getElementById("ignoreServicesRegexp").value = window.localStorage.ignoreServicesRegexp;
-
-  if ( window.localStorage.ignoreHostsRegexp != undefined )
-    document.getElementById("ignoreHostsRegexp").value = window.localStorage.ignoreHostsRegexp;
-
-  document.getElementById("ignoreCaseSensitivity").checked =
-    (window.localStorage.ignoreCaseSensitivity === "false") ? false : true;
-
-  document.getElementById("hideAcked").checked =
-    (window.localStorage.hideAcked === "true") ? true : false;
-}
-
-$(document).ready(function() {
-  // show tabs
-  $("#tabs").tabs();
-  restore_options();
-  update_refresh();
-});
-
-function update_refresh()
-{
-  $('#refrsecs').html(document.getElementById("refresh").value+ " seconds");
-}
-
-console.log(window.localStorage);
-</script>
-<script type="text/javascript">
-  /* <![CDATA[ */
-(function() {
- var s = document.createElement('script'), t = document.getElementsByTagName('script')[0];
- s.type = 'text/javascript';
- s.async = true;
- s.src = 'http://api.flattr.com/js/0.6/load.js?mode=auto';
- t.parentNode.insertBefore(s, t);
- })();
-/* ]]> */
-</script>
+  <script src="inc/options/options.js" type="text/javascript"></script>
 </head>
 
 <body id="options-body">
@@ -124,7 +33,7 @@ console.log(window.localStorage);
         <label for="url">URL to status.cgi</label> <input type="test" placeholder="i.e. https://monitoring.domain.com/icinga/cgi-bin/status.cgi" name="url" id="url" style="width: 400px;" />
       </div>
       <div>
-        <label for="refresh">Refresh</label> <input type="range" min="5" max="600" name="refresh" id="refresh" style="width: 300px;" onchange="javascript:update_refresh()" /> <span id="refrsecs">&nbsp;</span>
+        <label for="refresh">Refresh</label> <input type="range" min="5" max="600" name="refresh" id="refresh" style="width: 300px;"/> <span id="refrsecs">&nbsp;</span>
       </div>
       <div>
         <label for="hideAcked">Hide acknowledged</label> <input type="checkbox" placeholder="" name="hideAcked" id="hideAcked" />
@@ -145,7 +54,7 @@ console.log(window.localStorage);
 
 
     </div> <!-- end of first tab -->
-      <button class="save" onclick="save_options()">Save</button>
+      <button class="save" id="save_button">Save</button>
       <span id="status"></span>
   </div> <!-- end of tabs -->
 </div> <!-- end of options -->
