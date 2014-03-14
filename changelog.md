@@ -1,6 +1,13 @@
 Changelog
 =========
 
+0.1.3 - 14. 3. 2014
+-------------------
+  * Upgrade to manifest v2 and reupload to chrome store
+  * Fix refresh interval changem
+  * Fix #12 problem with limited host display
+  * Fix #15 rescheduling date format problem
+
 0.1.2 - 11. 7. 2012
 -------------------
   * Fix wrong handling of empty regexps which probably caused non-working extension. See #13
