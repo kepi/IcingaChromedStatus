@@ -85,14 +85,8 @@ $(document).ready(function() {
 
   $("#save_button").click(save_options);
   $("#refresh").on( "change", update_refresh );
+
+  $("img.lazy").lazyload();
 });
 
 console.log(window.localStorage);
-
-(function() {
-  var s = document.createElement('script'), t = document.getElementsByTagName('script')[0];
-  s.type = 'text/javascript';
-  s.async = true;
-  s.src = 'https://api.flattr.com/js/0.6/load.js?mode=auto';
-  t.parentNode.insertBefore(s, t);
-})();

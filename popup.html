@@ -9,6 +9,8 @@
   <link href="icinga.css?0.1.0" rel="stylesheet" type="text/css"/>
   <script src="icinga.js"></script>
   <script src="inc/popup.js"></script>
+  <script src="inc/flattr/load.js" async></script>
+  <script src="inc/jquery.lazyload.min.js" type="text/javascript"></script>
 </head>
 <body id="popup">
 <a class="uglyfirstahack" href="#">&nbsp;</a>
@@ -42,13 +44,20 @@
 
     <p>Author of this extension is <a class="ext" href="http://kepi.cz/">Ondra 'Kepi' Kudlík</a>, part of work on this extension is sponsored by <a class="ext" href="http://www.igloonet.cz/">igloonet.cz</a> company.</p>
 
-    <p class="center"><a class="ext" href="http://www.pledgie.com/campaigns/11805"><img alt="Click here to lend your support to: Icinga Status and make a donation at www.pledgie.com !" src="http://www.pledgie.com/campaigns/11805.png?skin_name=chrome" border="0" /></a></p>
+    <p class="center"><a class="ext" href="http://www.pledgie.com/campaigns/11805"><img class="lazy" alt="Click here to lend your support to: Icinga Status and make a donation at www.pledgie.com !" data-original="http://www.pledgie.com/campaigns/11805.png?skin_name=chrome" border="0" width="149" height="37" /></p>
   </div>
 </div>
 
 <div id="footer">
-  <span id="flattrbutton"><a class="FlattrButton" style="display:none;" rev="flattr;button:compact;" href="https://chrome.google.com/webstore/detail/imaieifkljkcdepgaeommbdgihollphm"></a><noscript><a href="https://flattr.com/thing/381395" target="_blank"><img src="https://api.flattr.com/button/flattr-badge-large.png" alt="Flattr this" title="Flattr this" border="0" /></a></noscript></span>
-
+  <span id="flattrbutton">
+      <a class="FlattrButton"
+         style="display:none;"
+         title="Flattr Icinga Status"
+         data-flattr-url="https://chrome.google.com/webstore/detail/imaieifkljkcdepgaeommbdgihollphm"
+         data-flattr-popout="0"
+         data-flattr-button="compact"
+         href="https://flattr.com/thing/381395">Flattr Icinga Status</a>
+  </span>
   <a class="ext" href="options.html">Options</a>
 </div>
 

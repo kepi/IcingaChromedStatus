@@ -234,12 +234,6 @@ $(document).ready(function() {
   // bind buttons
   $("#refresh-data").click(function() { refresh(); });
 
-});
+  $("img.lazy").lazyload();
 
-(function() {
-  var s = document.createElement('script'), t = document.getElementsByTagName('script')[0];
-  s.type = 'text/javascript';
-  s.async = true;
-  s.src = 'https://api.flattr.com/js/0.6/load.js?mode=auto';
-  t.parentNode.insertBefore(s, t);
-})();
+});
