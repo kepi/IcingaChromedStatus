@@ -169,8 +169,12 @@ function show()
 
 
     $("#output").html(ot+oo)
-    $("#outputHosts").html('<input type="text" id="searchHosts" onkeyup="filter(this, \'tableHosts\')" placeholder="enter part i.e. part of hostname" /><table id="tableHosts">'+oh+'</table>');
-    $("#outputServices").html('<input type="text" id="searchServices" onkeyup="filter(this, \'tableServices\')" placeholder="enter part i.e. part of service name or hostname" /><table id="tableServices">'+os+'</table>');
+    $("#outputHosts").html('<input type="text" id="searchHosts" placeholder="enter part i.e. part of hostname" /><table id="tableHosts">'+oh+'</table>');
+    $("#outputServices").html('<input type="text" id="searchServices" placeholder="enter part i.e. part of service name or hostname" /><table id="tableServices">'+os+'</table>');
+
+    // attach filter
+    $("#searchHosts").on("keyup", function() { filter(this, 'tableHosts'); } )
+    $("#searchServices").on("keyup", function() { filter(this, 'tableServices'); } )
 
     // handle commands
     $("a.command").click(function () {
@@ -199,8 +203,6 @@ function filter(search, table)
       /* services */
     } else if ( table == 'tableServices' && reg.test(row.attr('data-servicename') ) )  {
       enabledHosts[row.attr('data-hostname')] = 1;
-      console.log(row.attr('data-hostname'))
-      console.log(enabledHosts)
       $(this).css('display','table-row')
       /* none */
     } else {
