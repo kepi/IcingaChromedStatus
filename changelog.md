@@ -1,6 +1,12 @@
 Changelog
 =========
 
+0.1.4 - 14. 3. 2014
+-------------------
+  * Fix misplaced Save button
+  * Remove unused includes in background
+  * Async loading of donate buttons - fix problem with never appearing popup when flattr is down
+
 0.1.3 - 14. 3. 2014
 -------------------
   * Upgrade to manifest v2 and reupload to chrome store
