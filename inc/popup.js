@@ -21,6 +21,25 @@ function z(num)
   return num;
 }
 
+Date.prototype.format = function(format) //author: meizz
+{
+  var o = {
+    "M+" : this.getMonth()+1, //month
+    "D+" : this.getDate(),    //day
+    "h+" : this.getHours(),   //hour
+    "m+" : this.getMinutes(), //minute
+    "s+" : this.getSeconds() //second
+  }
+
+  if(/(Y+)/.test(format)) format=format.replace(RegExp.$1,
+                                                (this.getFullYear()+"").substr(4 - RegExp.$1.length));
+  for(var k in o)if(new RegExp("("+ k +")").test(format))
+  format = format.replace(RegExp.$1,
+                          RegExp.$1.length==1 ? o[k] :
+                                            ("00"+ o[k]).substr((""+ o[k]).length));
+  return format;
+}
+
 function sendCommand(command, hostname, servicename)
 {
   // basic variables
@@ -42,8 +61,10 @@ function sendCommand(command, hostname, servicename)
 
     // Reschedule next check of host or service
   } else if ( command == 'reschedule' ) {
-    var t = new Date();
-    var time = z(t.getDate()) + '-' + z(t.getMonth()+1) + '-' + z(t.getFullYear()) + '+' + z(t.getHours()) + '%3A' + z(t.getMinutes()) + '%3A' + z(t.getSeconds());
+    var format = ( window.localStorage.dateFormat != undefined ) ? window.localStorage.dateFormat : "DD-MM-YYYY hh:mm:ss";
+    var time = encodeURIComponent( new Date().format(format) );
+    console.log(format);
+    console.log( decodeURIComponent(time) );
 
     var dataString = 'cmd_typ=' + cmds[command] + '&cmd_mod=2&host=' + hostname + service_query + '&start_time=' + time + '&force_check=on&submit=Commit';
     $.post(cmd_url, dataString, function(data, textStatus) { debug_log(textStatus); debug_log(data); });

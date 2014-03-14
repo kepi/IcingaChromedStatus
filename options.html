@@ -24,32 +24,34 @@
 
     <div id="tab-1" class="options">
       <div style="height: 30px;">
-        <label for="username">Username</label> <input type="test" name="username" id="username" placeholder="Your Icinga Username" />
+        <label for="username">Username</label> <input type="text" name="username" id="username" placeholder="Your Icinga Username" />
       </div>
       <div>
         <label for="password">Password</label> <input type="password" name="password" id="password" /> <cite>Leave empty if you don't wish to change password</cite>
       </div>
       <div>
-        <label for="url">URL to status.cgi</label> <input type="test" placeholder="i.e. https://monitoring.domain.com/icinga/cgi-bin/status.cgi" name="url" id="url" style="width: 400px;" />
+        <label for="url">URL to status.cgi</label> <input type="text" placeholder="i.e. https://monitoring.domain.com/icinga/cgi-bin/status.cgi" name="url" id="url" style="width: 400px;" />
       </div>
       <div>
         <label for="refresh">Refresh</label> <input type="range" min="5" max="600" name="refresh" id="refresh" style="width: 300px;"/> <span id="refrsecs">&nbsp;</span>
       </div>
       <div>
-        <label for="hideAcked">Hide acknowledged</label> <input type="checkbox" placeholder="" name="hideAcked" id="hideAcked" />
+        <label for="hideAcked">Hide Acknowledged</label> <input type="checkbox" placeholder="" name="hideAcked" id="hideAcked" />
       </div>
     </div> <!-- end of first tab -->
 
     <div id="tab-2" class="options">
       <div>
-        <label for="ignoreServicesRegexp">Ignore services</label> <input type="test" placeholder="i.e. (imap|ssh)" name="ignoreServicesRegexp" id="ignoreServicesRegexp" style="width: 345px;" /> <cite>regexp</cite>
+        <label for="dateFormat">Date Format</label> <input type="text" name="dateFormat" id="dateFormat" style="width: 260px"/>
+      <div>
+        <label for="ignoreServicesRegexp">Ignore Services</label> <input type="text" placeholder="i.e. (imap|ssh)" name="ignoreServicesRegexp" id="ignoreServicesRegexp" style="width: 345px;" /> <cite>regexp</cite>
       </div>
       <div>
-        <label for="ignoreHostsRegexp">Ignore hosts</label> <input type="test" placeholder="i.e. ignoredhosts[0-9]+" name="ignoreHostsRegexp" id="ignoreHostsRegexp" style="width: 345px;" /> <cite>regexp</cite>
+        <label for="ignoreHostsRegexp">Ignore Hosts</label> <input type="text" placeholder="i.e. ignoredhosts[0-9]+" name="ignoreHostsRegexp" id="ignoreHostsRegexp" style="width: 345px;" /> <cite>regexp</cite>
       </div>
 
       <div>
-        <label for="ignoreCaseSensitivity">Case insensitive regexp's</label> <input type="checkbox" placeholder="" name="ignoreCaseSensitivity" id="ignoreCaseSensitivity" />
+        <label for="ignoreCaseSensitivity">Case Insensitive Regexp's</label> <input type="checkbox" placeholder="" name="ignoreCaseSensitivity" id="ignoreCaseSensitivity" />
       </div>
 
 

@@ -17,6 +17,7 @@ function save_options() {
 
   window.localStorage.refresh = document.getElementById("refresh").value;
 
+  window.localStorage.dateFormat = document.getElementById("dateFormat").value;
   window.localStorage.ignoreServicesRegexp = document.getElementById("ignoreServicesRegexp").value;
   window.localStorage.ignoreHostsRegexp = document.getElementById("ignoreHostsRegexp").value;
 
@@ -42,25 +43,33 @@ function restore_options() {
   if ( window.localStorage.username != undefined )
   document.getElementById("username").value = window.localStorage.username;
 
-  if ( window.localStorage.url != undefined )
-  document.getElementById("url").value = window.localStorage.url;
+  if ( window.localStorage.url != undefined ) {
+    document.getElementById("url").value = window.localStorage.url;
+  }
 
-  if ( window.localStorage.refresh != undefined )
-  document.getElementById("refresh").value = window.localStorage.refresh;
-  else
-  document.getElementById("refresh").value = 30;
+  if ( window.localStorage.refresh != undefined ) {
+    document.getElementById("refresh").value = window.localStorage.refresh;
+  } else {
+    document.getElementById("refresh").value = 30;
+  }
 
-  if ( window.localStorage.ignoreServicesRegexp != undefined )
-  document.getElementById("ignoreServicesRegexp").value = window.localStorage.ignoreServicesRegexp;
+  if ( window.localStorage.ignoreServicesRegexp != undefined ) {
+    document.getElementById("ignoreServicesRegexp").value = window.localStorage.ignoreServicesRegexp;
+  }
 
-  if ( window.localStorage.ignoreHostsRegexp != undefined )
-  document.getElementById("ignoreHostsRegexp").value = window.localStorage.ignoreHostsRegexp;
+  if ( window.localStorage.dateFormat != undefined && window.localStorage.dateFormat != '' ) {
+    document.getElementById("dateFormat").value = window.localStorage.dateFormat;
+  } else {
+    document.getElementById("dateFormat").value = "DD-MM-YYYY hh:mm:ss";
+  }
 
-  document.getElementById("ignoreCaseSensitivity").checked =
-  (window.localStorage.ignoreCaseSensitivity === "false") ? false : true;
+  if ( window.localStorage.ignoreHostsRegexp != undefined ) {
+    document.getElementById("ignoreHostsRegexp").value = window.localStorage.ignoreHostsRegexp;
+  }
 
-  document.getElementById("hideAcked").checked =
-  (window.localStorage.hideAcked === "true") ? true : false;
+  document.getElementById("ignoreCaseSensitivity").checked = (window.localStorage.ignoreCaseSensitivity === "false") ? false : true;
+
+  document.getElementById("hideAcked").checked = (window.localStorage.hideAcked === "true") ? true : false;
 }
 
 function update_refresh()
