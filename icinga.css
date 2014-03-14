@@ -84,8 +84,12 @@ a#refresh-data {
   background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#fdfdfd), to(#e6f2cb));
 }
 
-#footer span#flattrbutton {
-  float: left;
+#footer div#flattrbutton {
+    float: left;
+}
+
+#footer div#footerbuttons {
+    float: right;
 }
 
 #footer a {

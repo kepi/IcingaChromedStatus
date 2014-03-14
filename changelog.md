@@ -1,6 +1,10 @@
 Changelog
 =========
 
+0.1.5 - 14. 3. 2014
+-------------------
+  * Fix flattr loading
+
 0.1.4 - 14. 3. 2014
 -------------------
   * Fix misplaced Save button
