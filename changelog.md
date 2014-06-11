@@ -1,6 +1,13 @@
 Changelog
 =========
 
+0.1.6 - 12. 6. 2014
+-------------------
+  * New option to hide hosts and services in downtime
+  * Fix not displaying acked hosts with not-acked services
+  * Remove typo which broke links to hosts details (thanks to Michael Bladowski)
+  * Memory leaks fixes, should be much more memory friendly
+
 0.1.5 - 14. 3. 2014
 -------------------
   * Fix flattr loading
