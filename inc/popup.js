@@ -113,7 +113,7 @@ function show()
       var ack='<a title="Acknowledge this problem" class="command ui-icon ui-icon-wrench" href="#" data-command="ack" data-host="' + host.name + '">ack</a>';
       var hDowntime = host.downtime ? ' downtime' : '';
 
-      var line = '<tr class="host" data-hostname="'+host.name+'"><td colspan="2" class="normal'+hDowntime+'"><a class="icinga-link" href="#" data-href="'+window.localStorage.url_icinga+'/'+host.link+'\'">'+host.name+'</a>'+(host.ack?'&nbsp;<span class="ui-icon ui-icon-check" style="float: right;" title="Acknowledged">&nbsp;</span>':'')+'</td><td class="state '+stateClass(host.state)+'">'+stateClass(host.state, true)+'</td><td class="tools">'+reschedule+(host.ack || host.downtime || host.state == 0 ? '' : ack)+'</td></tr>';
+      var line = '<tr class="host" data-hostname="'+host.name+'"><td colspan="2" class="normal'+hDowntime+'"><a class="icinga-link" href="#" data-href="'+window.localStorage.url_icinga+'/'+host.link+'">'+host.name+'</a>'+(host.ack?'&nbsp;<span class="ui-icon ui-icon-check" style="float: right;" title="Acknowledged">&nbsp;</span>':'')+'</td><td class="state '+stateClass(host.state)+'">'+stateClass(host.state, true)+'</td><td class="tools">'+reschedule+(host.ack || host.downtime || host.state == 0 ? '' : ack)+'</td></tr>';
 
       // add to overview only if not ok
       var _states = hideAcked ? host.states : host.states_all;
