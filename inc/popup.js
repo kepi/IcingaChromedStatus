@@ -106,6 +106,8 @@ function show()
     var os = ''; // services
 
     var hideAcked = window.localStorage.hideAcked === "true" ? true : false;
+    var hideDowntimeed = window.localStorage.hideDowntimeed === "true" ? true : false;
+      console.log(hideDowntimeed);
 
     // browse all hosts
     for (var h in response.hosts) {
@@ -132,7 +134,7 @@ function show()
 
 
         // add to overview only if not ok
-        if ( service.state > 0 && ( !hideAcked || ( hideAcked && !service.ack ) ) ) { oo_services_tmp += s_line; }
+        if ( service.state > 0 && ( !hideAcked || ( hideAcked && !service.ack ) ) && ( !hideDowntimeed || ( hideDowntimeed && !service.downtime ) ) ) { oo_services_tmp += s_line; }
 
         os += s_line;
       }

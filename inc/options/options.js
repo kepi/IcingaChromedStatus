@@ -27,6 +27,9 @@ function save_options() {
   window.localStorage.hideAcked =
   document.getElementById("hideAcked").checked ? true : false;
 
+  window.localStorage.hideDowntimeed =
+  document.getElementById("hideDowntimeed").checked ? true : false;
+
   // Update status to let user know options were saved.
   var status = document.getElementById("status");
   status.innerHTML = "Options Saved.";
@@ -70,6 +73,7 @@ function restore_options() {
   document.getElementById("ignoreCaseSensitivity").checked = (window.localStorage.ignoreCaseSensitivity === "false") ? false : true;
 
   document.getElementById("hideAcked").checked = (window.localStorage.hideAcked === "true") ? true : false;
+  document.getElementById("hideDowntimeed").checked = (window.localStorage.hideDowntimeed === "true") ? true : false;
 }
 
 function update_refresh()
