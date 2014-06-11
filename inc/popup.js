@@ -100,9 +100,10 @@ function show()
 
     debug_log(response.state);
 
-    var oo = '';
-    var oh = '';
-    var os = '';
+    // tabs
+    var oo = ''; // overview
+    var oh = ''; // hosts
+    var os = ''; // services
 
     var hideAcked = window.localStorage.hideAcked === "true" ? true : false;
 
@@ -115,15 +116,11 @@ function show()
 
       var line = '<tr class="host" data-hostname="'+host.name+'"><td colspan="2" class="normal'+hDowntime+'"><a class="icinga-link" href="#" data-href="'+window.localStorage.url_icinga+'/'+host.link+'">'+host.name+'</a>'+(host.ack?'&nbsp;<span class="ui-icon ui-icon-check" style="float: right;" title="Acknowledged">&nbsp;</span>':'')+'</td><td class="state '+stateClass(host.state)+'">'+stateClass(host.state, true)+'</td><td class="tools">'+reschedule+(host.ack || host.downtime || host.state == 0 ? '' : ack)+'</td></tr>';
 
-      // add to overview only if not ok
-      var _states = hideAcked ? host.states : host.states_all;
-
-      if ( _states['HOST'] > 0 || _states['WRONG'] > 0 )
-      oo += line;
 
       oh += line;
       os += line;
 
+      var oo_services_tmp = '';
       // browse all services of host
       for (var s in host.services ) {
         var service = host.services[s];
@@ -131,14 +128,20 @@ function show()
         var reschedule='<a title="Reschedule check of this service" class="command ui-icon ui-icon-refresh" href="#" data-command="reschedule" data-host="' + host.name + '" data-service="' + service.name + '">resch</a>';
         var ack='<a title="Acknowledge this problem" class="command ui-icon ui-icon-wrench" href="#" data-command="ack" data-host="' + host.name + '" data-service="' + service.name + '">ack</a>';
 
-        var line = '<tr class="service" data-hostname="'+host.name+'" data-servicename="'+service.name+'"><td style="width: 30px;">&nbsp;</td><td class="normal'+sDowntime+'" style="white-space: nowrap;"><a class="icinga-link" href="#" data-href="'+window.localStorage.url_icinga+'/'+service.link+'">'+service.name+'</a>'+(service.ack?'&nbsp;<span class="ui-icon ui-icon-check" style="float: right;" title="Acknowledged">&nbsp;</span>':'')+'</td><td class="state '+stateClass(service.state)+'">'+stateClass(service.state, true)+'</td><td class="tools">'+reschedule+(service.ack || service.downtime || service.state == 0 ? '' : ack)+'</td></tr>';
+        var s_line = '<tr class="service" data-hostname="'+host.name+'" data-servicename="'+service.name+'"><td style="width: 30px;">&nbsp;</td><td class="normal'+sDowntime+'" style="white-space: nowrap;"><a class="icinga-link" href="#" data-href="'+window.localStorage.url_icinga+'/'+service.link+'">'+service.name+'</a>'+(service.ack?'&nbsp;<span class="ui-icon ui-icon-check" style="float: right;" title="Acknowledged">&nbsp;</span>':'')+'</td><td class="state '+stateClass(service.state)+'">'+stateClass(service.state, true)+'</td><td class="tools">'+reschedule+(service.ack || service.downtime || service.state == 0 ? '' : ack)+'</td></tr>';
 
 
         // add to overview only if not ok
-        if ( service.state > 0 && ( !hideAcked || ( hideAcked && !service.ack ) ) )
-        oo += line;
+        if ( service.state > 0 && ( !hideAcked || ( hideAcked && !service.ack ) ) ) { oo_services_tmp += s_line; }
 
-        os += line;
+        os += s_line;
+      }
+
+      // add to overview only if not ok
+      var _states = hideAcked ? host.states : host.states_all;
+      if ( oo_services_tmp != '' || _states['HOST'] > 0 || _states['WRONG'] > 0 ) {
+        oo += line;
+        oo += oo_services_tmp;
       }
     }
 
