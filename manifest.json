@@ -1,6 +1,6 @@
 {
   "name": "Icinga Status",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "Icinga Status is simple open source extension for Google Chrome™ that helps you watch over your Icinga or Nagios instance.",
 
   "background": {
